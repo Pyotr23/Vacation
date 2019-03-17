@@ -41,6 +41,8 @@ namespace Backend
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
+
+            SeedData.EnsurePopulated(app);
         }
     }
 }
