@@ -14,12 +14,12 @@ namespace Backend.Models
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Vacation> Vacations { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Vacation>()
-                .HasOne(p => p.Employee)
-                .WithMany(t => t.Vacations)
-                .OnDelete(DeleteBehavior.Cascade);
-        }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Vacation>()
+        //        .HasOne(p => p.Employee)
+        //        .WithMany(t => t.Vacations)
+        //        .OnDelete(DeleteBehavior.Cascade);
+        //}
     }
 }

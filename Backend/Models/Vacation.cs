@@ -12,7 +12,7 @@ namespace Backend.Models
         public int Duration { get; set; }
         public DateTime Finish => Start.AddDays(Duration);
 
-        public int? EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
         public Employee Employee { get; set; }
     }
 }
