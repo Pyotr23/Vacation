@@ -14,13 +14,15 @@ namespace Backend.Models
         {
             ApplicationDbContext context = app.ApplicationServices.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
-            if (!context.Employees.Any())
+            if (!context.Vacations.Any())
             {
-                context.Employees.AddRange(
-                    new Employee { Name = "Pyotr", Color = "Green" },
-                    new Employee { Name = "Sergey", Color = "Blue" },
-                    new Employee { Name = "Vasiliy", Color = "Red" }
-                    );
+                //context.Employees.AddRange(
+                //    new Employee { Name = "Pyotr", Color = "Green" },
+                //    new Employee { Name = "Sergey", Color = "Blue" },
+                //    new Employee { Name = "Vasiliy", Color = "Red" }
+                //    );
+                
+                //context.SaveChanges();
 
                 context.Vacations.AddRange(
                     new Vacation { Start = new DateTime(2019, 5, 6), Duration = 7, Employee = context.Employees.ElementAt(0) },
@@ -30,6 +32,7 @@ namespace Backend.Models
                     new Vacation { Start = new DateTime(2019, 5, 12), Duration = 7, Employee = context.Employees.ElementAt(2) },
                     new Vacation { Start = new DateTime(2019, 5, 25), Duration = 7, Employee = context.Employees.ElementAt(2) }
                     );
+
                 context.SaveChanges();
             }
         }
