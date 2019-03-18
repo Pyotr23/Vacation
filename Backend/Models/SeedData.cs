@@ -14,15 +14,15 @@ namespace Backend.Models
         {
             ApplicationDbContext context = app.ApplicationServices.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
-            if (!context.Vacations.Any())
+            if (!context.Employees.Any())
             {
-                //context.Employees.AddRange(
-                //    new Employee { Name = "Pyotr", Color = "Green" },
-                //    new Employee { Name = "Sergey", Color = "Blue" },
-                //    new Employee { Name = "Vasiliy", Color = "Red" }
-                //    );
-                
-                //context.SaveChanges();
+                context.Employees.AddRange(
+                    new Employee { Name = "Pyotr", Color = "Green" },
+                    new Employee { Name = "Sergey", Color = "Blue" },
+                    new Employee { Name = "Vasiliy", Color = "Red" }
+                    );
+
+                context.SaveChanges();
 
                 context.Vacations.AddRange(
                     new Vacation { Start = new DateTime(2019, 5, 6), Duration = 7, Employee = context.Employees.Skip(0).FirstOrDefault() },
