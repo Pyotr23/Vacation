@@ -13,7 +13,7 @@ namespace Backend.Models
         Employee AddEmployee(Employee employee);
         void DeleteEmployee(int id);
 
-        Vacation AddVacation(int idEmployee, Vacation vacation);
-        void DeleteVacation(int idEmployee, int idVacation);
+        Vacation AddVacation(Vacation vacation);
+        void DeleteVacation(int id);
     }
 }

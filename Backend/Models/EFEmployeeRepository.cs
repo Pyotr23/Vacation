@@ -35,5 +35,22 @@ namespace Backend.Models
                 context.SaveChanges();
             }
         }
+
+        public Vacation AddVacation(Vacation vacation)
+        {
+            context.Vacations.Add(vacation);
+            context.SaveChanges();
+            return vacation;
+        }
+
+        public void DeleteVacation(int id)
+        {
+            Vacation deletedVacation = context.Vacations.FirstOrDefault(v => v.VacationId == id);
+            if (deletedVacation != null)
+            {
+                context.Vacations.Remove(deletedVacation);
+                context.SaveChanges();
+            }
+        }
     }
 }
