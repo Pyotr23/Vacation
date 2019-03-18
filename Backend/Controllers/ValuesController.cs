@@ -16,8 +16,7 @@ namespace Backend.Controllers
         public ValuesController(IEmployeeRepository repo)
         {
             employeeRepository = repo;
-        }
-        
+        }        
 
         public IEnumerable<Employee> AddEmployees()
         {
@@ -25,9 +24,15 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public Employee PostEmployee(Employee employee)
+        public Employee PostEmployee([FromBody]Employee employee)
         {
             return employeeRepository.AddEmployee(employee);
+        }
+
+        [HttpDelete("{id}")]
+        public void DeleteEmployee(int id)
+        {
+            DeleteEmployee(id);
         }
 
         //// GET api/values
