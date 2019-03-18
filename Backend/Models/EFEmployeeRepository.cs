@@ -19,10 +19,11 @@ namespace Backend.Models
 
         public IEnumerable<Vacation> Vacations => context.Vacations;
 
-        public void AddEmployee(Employee employee)
+        public Employee AddEmployee(Employee employee)
         {
             context.Employees.Add(employee);
             context.SaveChanges();
+            return employee;
         }
 
         public void DeleteEmployee(int id)
