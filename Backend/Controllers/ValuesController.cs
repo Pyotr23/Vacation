@@ -32,7 +32,7 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public void DeleteEmployee(int id)
         {
-            DeleteEmployee(id);
+            employeeRepository.DeleteEmployee(id);
         }
 
         //// GET api/values
