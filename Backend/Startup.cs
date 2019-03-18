@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Http;
 using Backend.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,7 +32,7 @@ namespace Backend
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connection));
             services.AddSingleton<IEmployeeRepository, EFEmployeeRepository>();
-            services.AddMvc();
+            services.AddMvc();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

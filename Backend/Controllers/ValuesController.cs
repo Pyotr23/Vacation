@@ -18,9 +18,9 @@ namespace Backend.Controllers
             employeeRepository = repo;
         }
         
-        public IEnumerable<Vacation> GetEmployees()
+        public IEnumerable<Employee> GetEmployees()
         {
-            return employeeRepository.Vacations;
+            return employeeRepository.Employees;
         }
 
         //// GET api/values
