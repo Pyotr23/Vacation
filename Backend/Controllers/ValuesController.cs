@@ -18,10 +18,12 @@ namespace Backend.Controllers
             employeeRepository = repo;
         }        
 
-        public IEnumerable<Employee> AddEmployees()
+        public IEnumerable<Employee> GetEmployees()
         {
             return employeeRepository.Employees;
         }
+
+
 
         [HttpPost]
         public Employee PostEmployee([FromBody]Employee employee)
