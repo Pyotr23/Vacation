@@ -17,5 +17,7 @@ namespace Backend.Models
         public IQueryable<Employee> Employees => context.Employees;
 
         public IQueryable<Vacation> Vacations => context.Vacations;
+
+
     }
 }

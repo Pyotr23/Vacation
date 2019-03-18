@@ -9,5 +9,8 @@ namespace Backend.Models
     {
         IQueryable<Employee> Employees { get; }
         IQueryable<Vacation> Vacations { get; }
+
+        void AddEmployee(Employee employee);
+        void DeleteEmployee(int id);
     }
 }
