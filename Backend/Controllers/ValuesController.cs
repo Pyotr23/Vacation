@@ -19,11 +19,12 @@ namespace Backend.Controllers
         }
         
 
-        public IEnumerable<Employee> GetEmployees()
+        public IEnumerable<Employee> AddEmployees()
         {
             return employeeRepository.Employees;
         }
 
+        [HttpPost]
         public Employee PostEmployee(Employee employee)
         {
             return employeeRepository.AddEmployee(employee);
