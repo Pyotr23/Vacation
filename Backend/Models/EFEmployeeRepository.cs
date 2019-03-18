@@ -15,9 +15,9 @@ namespace Backend.Models
             context = ctx;
         }
 
-        public IQueryable<Employee> Employees => context.Employees.Include(v => v.Vacations);
+        public IEnumerable<Employee> Employees => context.Employees.Include(v => v.Vacations);
 
-        public IQueryable<Vacation> Vacations => context.Vacations;
+        public IEnumerable<Vacation> Vacations => context.Vacations;
 
         public void AddEmployee(Employee employee)
         {

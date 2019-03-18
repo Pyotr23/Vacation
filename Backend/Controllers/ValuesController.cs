@@ -17,10 +17,10 @@ namespace Backend.Controllers
         {
             employeeRepository = repo;
         }
-
-        public IQueryable<Employee> GetEmployees()
+        
+        public IEnumerable<Vacation> GetEmployees()
         {
-            return employeeRepository.Employees;
+            return employeeRepository.Vacations;
         }
 
         //// GET api/values

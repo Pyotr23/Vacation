@@ -7,8 +7,8 @@ namespace Backend.Models
 {
     public interface IEmployeeRepository
     {
-        IQueryable<Employee> Employees { get; }
-        IQueryable<Vacation> Vacations { get; }
+        IEnumerable<Employee> Employees { get; }
+        IEnumerable<Vacation> Vacations { get; }
 
         void AddEmployee(Employee employee);
         void DeleteEmployee(int id);
