@@ -37,6 +37,18 @@ namespace Backend.Controllers
             employeeRepository.DeleteEmployee(id);
         }
 
+        [HttpPost("vacation")]
+        public Vacation AddVacation([FromBody]Vacation vacation)
+        {
+            return employeeRepository.AddVacation(vacation);
+        }
+
+        [HttpDelete("vacation/{id}")]
+        public void DeleteVacation(int id)
+        {
+            employeeRepository.DeleteVacation(id);
+        }
+
         //// GET api/values
         //[HttpGet]
         //public ActionResult<IEnumerable<string>> Get()
