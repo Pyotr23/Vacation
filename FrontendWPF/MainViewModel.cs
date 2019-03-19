@@ -11,28 +11,31 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Web.Script.Serialization;
+using System.Data;
 
 namespace FrontendWPF
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<Employee> employees;
+        private IEnumerable<Employee> employees;
+        private DataView table;
 
-        public ObservableCollection<Employee> Employees
+        public DataView Table
         {
-            get => employees;
+            get => table;
             set
             {
-                employees = value;
-                OnPropertyChanged(nameof(Employees));
+                table = value;
+                OnPropertyChanged(nameof(Table));
             }
         }
 
         public MainViewModel()
         {
             bool success = false;
-            Employees = new ObservableCollection<Employee>(
-                CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success)); 
+            employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
+
+            Table = CreateDataView(employees);
 
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
@@ -54,6 +57,63 @@ namespace FrontendWPF
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private DataView CreateDataView(IEnumerable<Employee> employees)
+        {
+            DataTable dataTable = new DataTable();
+
+            int maxVacationNumber = 0;
+            foreach (Employee emp in employees)
+            {
+                if (maxVacationNumber < emp.Vacations.Count)
+                    maxVacationNumber = emp.Vacations.Count;
+            }
+
+            for (int i = 0; i <= maxVacationNumber * 3; i++)
+            {
+                if (i != 0)
+                {
+                    switch (i % 3)
+                    {
+                        case 1:
+                            dataTable.Columns.Add($"Дата начала {i / 3 + 1}");
+                            break;
+                        case 2:
+                            dataTable.Columns.Add($"Продолжительность {i / 3 + 1}, дней");
+                            break;
+                        case 0:
+                            dataTable.Columns.Add($"Дата окончания {i / 3}");
+                            break;
+                    }
+                }
+                else
+                    dataTable.Columns.Add("Фамилия, И.О.");
+            }
+
+            foreach (Employee emp in employees)
+            {
+                string[] myRow = new string[maxVacationNumber * 3 + 1];                
+                for (int i = 1; i <= emp.Vacations.Count * 3; i++)
+                {
+                    switch (i % 3)
+                    {
+                        case 1:
+                            myRow[i] = emp.Vacations[i / 3].Start.ToShortDateString();
+                            break;
+                        case 2:
+                            myRow[i] = emp.Vacations[i / 3].Duration.ToString();
+                            break;
+                        case 0:
+                            myRow[i] = DateTime.Parse(myRow[i - 2]).AddDays(int.Parse(myRow[i - 1])).ToShortDateString();
+                            break;
+                    }
+                }
+                myRow[0] = emp.Name;
+                dataTable.Rows.Add(myRow);
+            }
+
+            return dataTable.DefaultView;
         }
 
         public T CallWebAPi<T>(Uri url, string method, out bool isSuccessStatusCode)

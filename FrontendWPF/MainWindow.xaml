@@ -10,10 +10,9 @@
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
-        <DataGrid ItemsSource="{Binding Employees}" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Фамилия, И.О." Binding="{Binding Name}"/>
-            </DataGrid.Columns>
+        <DataGrid ItemsSource="{Binding Table}">
+                       
         </DataGrid>
+        
     </Grid>
 </Window>
