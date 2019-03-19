@@ -14,7 +14,7 @@ using System.Web.Script.Serialization;
 
 namespace FrontendWPF
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         private ObservableCollection<Employee> employees;
 
