@@ -17,8 +17,13 @@ namespace FrontendWPF
         private static IEnumerable<Employee> employees;
         private DataView table;
         private DataRowView currentRow;
-        private Employee currentEmployee = new Employee() { Color = "Purple" };
+        private string name;
+        private string empColor;
         private static HttpClient client = new HttpClient();
+        private Employee currentEmployee;
+
+        public RelayCommand AddEmployee { get; set; }
+        public RelayCommand DeleteEmployee { get; set; }
 
         public string[] Colors { get; set; } = 
             {
@@ -31,13 +36,23 @@ namespace FrontendWPF
                 "Purple"
             };        
 
-        public Employee CurrentEmployee
+        public string Name
         {
-            get => currentEmployee;
+            get => name;
             set
             {
-                currentEmployee = value;
-                OnPropertyChanged(nameof(CurrentEmployee));
+                name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+
+        public string EmpColor
+        {
+            get => empColor;
+            set
+            {
+                empColor = value;
+                OnPropertyChanged(nameof(empColor));
             }
         }
 
@@ -59,7 +74,11 @@ namespace FrontendWPF
                 currentRow = value;
                 OnPropertyChanged(nameof(CurrentRow));
                 if (currentRow != null)
-                    CurrentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
+                {
+                    currentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
+                    Name = currentEmployee.Name;
+                    EmpColor = currentEmployee.Color;
+                }                    
             }
         }
 
@@ -73,7 +92,14 @@ namespace FrontendWPF
 
             GetAllEmployees();
 
-            
+            AddEmployee = new RelayCommand(o => NewEmployee(), v => EmpColor != null);
+            DeleteEmployee = new RelayCommand(o => 
+            {
+                DelEmployee();
+                Name = "";
+                EmpColor = null;
+            }, 
+            o => currentEmployee != null && currentEmployee.Name == this.Name);
             
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
@@ -169,6 +195,38 @@ namespace FrontendWPF
                 //MessageBox.Show("Error!");
             }
             
+        }
+
+        public async void NewEmployee()
+        {
+            try
+            {
+                Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
+                var response = await client.PostAsJsonAsync("/api/values/", newEmployee);
+                response.EnsureSuccessStatusCode(); // Throw on error code. 
+                //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                //studentsListView.ItemsSource = await GetAllStudents();
+                //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
+                GetAllEmployees();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+            }
+        }
+
+        public async void DelEmployee()
+        {
+            try
+            {
+                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}");
+                response.EnsureSuccessStatusCode();
+                GetAllEmployees();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+            }
         }
 
         //public T CallWebAPi<T>(Uri url, string method, out bool isSuccessStatusCode)
