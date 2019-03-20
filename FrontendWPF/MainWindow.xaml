@@ -10,7 +10,7 @@
         <local:MainViewModel/>
     </Window.DataContext>
     <Grid>
-        <DataGrid ItemsSource="{Binding Table}">
+        <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}">
                        
         </DataGrid>
         

@@ -36,7 +36,7 @@ namespace FrontendWPF
             employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
 
             Table = CreateDataView(employees);
-
+            
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
 
@@ -63,6 +63,7 @@ namespace FrontendWPF
         {
             DataTable dataTable = new DataTable();
 
+            // Вычисляю текущее маскимальное количество отпусков.
             int maxVacationNumber = 0;
             foreach (Employee emp in employees)
             {
@@ -70,30 +71,31 @@ namespace FrontendWPF
                     maxVacationNumber = emp.Vacations.Count;
             }
 
-            for (int i = 0; i <= maxVacationNumber * 3; i++)
+            // Создаю пустые столбцы с заголовками.
+
+            dataTable.Columns.Add("ФИО");
+
+            for (int i = 1; i <= maxVacationNumber * 3; i++)
             {
-                if (i != 0)
+                switch (i % 3)
                 {
-                    switch (i % 3)
-                    {
-                        case 1:
-                            dataTable.Columns.Add($"Дата начала {i / 3 + 1}");
-                            break;
-                        case 2:
-                            dataTable.Columns.Add($"Продолжительность {i / 3 + 1}, дней");
-                            break;
-                        case 0:
-                            dataTable.Columns.Add($"Дата окончания {i / 3}");
-                            break;
-                    }
+                    case 1:
+                        dataTable.Columns.Add($"Дата начала {i / 3 + 1}");
+                        break;
+                    case 2:
+                        dataTable.Columns.Add($"Продолжительность {i / 3 + 1}, дней");
+                        break;
+                    case 0:
+                        dataTable.Columns.Add($"Дата окончания {i / 3}");
+                        break;
                 }
-                else
-                    dataTable.Columns.Add("Фамилия, И.О.");
             }
 
+            // Создаю строки, "разбитые" по ячейкам
             foreach (Employee emp in employees)
             {
-                string[] myRow = new string[maxVacationNumber * 3 + 1];                
+                string[] myRow = new string[maxVacationNumber * 3 + 1];
+                myRow[0] = emp.Name.ToString();
                 for (int i = 1; i <= emp.Vacations.Count * 3; i++)
                 {
                     switch (i % 3)
@@ -109,7 +111,6 @@ namespace FrontendWPF
                             break;
                     }
                 }
-                myRow[0] = emp.Name;
                 dataTable.Rows.Add(myRow);
             }
 
