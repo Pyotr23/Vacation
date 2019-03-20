@@ -20,8 +20,7 @@ namespace FrontendWPF
         private IEnumerable<Employee> employees;
         private DataView table;
         private DataRowView currentRow;
-        private Employee currentEmployee;
-        private string currentColor = "Purple";    
+        private Employee currentEmployee = new Employee() { Color = "Purple" };          
         
         public string[] Colors { get; set; } = 
             {
@@ -32,17 +31,7 @@ namespace FrontendWPF
                 "Azure",
                 "Blue",
                 "Purple"
-            };
-
-        public string CurrentColor
-        {
-            get => currentColor;
-            set
-            {
-                currentColor = value;
-                OnPropertyChanged(nameof(CurrentColor));
-            }
-        }
+            };        
 
         public Employee CurrentEmployee
         {
@@ -72,10 +61,7 @@ namespace FrontendWPF
                 currentRow = value;
                 OnPropertyChanged(nameof(CurrentRow));
                 if (currentRow != null)
-                {
                     CurrentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
-                    CurrentColor = CurrentEmployee.Color;
-                }                    
             }
         }
 
