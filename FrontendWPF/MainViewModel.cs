@@ -19,7 +19,18 @@ namespace FrontendWPF
     {
         private IEnumerable<Employee> employees;
         private DataView table;
+        private DataRowView currentRow;
         private Employee currentEmployee;
+        
+        public Employee CurrentEmployee
+        {
+            get => currentEmployee;
+            set
+            {
+                currentEmployee = value;
+                OnPropertyChanged(nameof(CurrentEmployee));
+            }
+        }
 
         public DataView Table
         {
@@ -31,9 +42,16 @@ namespace FrontendWPF
             }
         }
 
-        public Employee CurrentEmployee
+        public DataRowView CurrentRow
         {
-            get => 
+            get => currentRow;
+            set
+            {
+                currentRow = value;
+                OnPropertyChanged(nameof(CurrentRow));
+                if (currentRow != null)
+                    CurrentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
+            }
         }
 
         public MainViewModel()
