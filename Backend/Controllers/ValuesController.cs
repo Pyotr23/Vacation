@@ -37,8 +37,8 @@ namespace Backend.Controllers
             employeeRepository.DeleteEmployee(id);
         }
 
-        [HttpPost("vacation")]
-        public Vacation AddVacation([FromBody]Vacation vacation)
+        [HttpPost]
+        public Vacation AddVacation([FromBody]Employee employee, [FromBody]Vacation vacation)
         {
             return employeeRepository.AddVacation(vacation);
         }

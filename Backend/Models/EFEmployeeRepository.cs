@@ -36,8 +36,9 @@ namespace Backend.Models
             }
         }
 
-        public Vacation AddVacation(Vacation vacation)
+        public Vacation AddVacation(Employee employee, Vacation vacation)
         {
+            context.Employees
             context.Vacations.Add(vacation);
             context.SaveChanges();
             return vacation;
