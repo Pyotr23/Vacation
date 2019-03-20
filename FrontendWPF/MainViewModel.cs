@@ -21,9 +21,44 @@ namespace FrontendWPF
         private string empColor;
         private static HttpClient client = new HttpClient();
         private Employee currentEmployee;
+        private IEnumerable<Vacation> vacations;
+        private DateTime start;
+        private string duration;
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
+        public RelayCommand CommandAddVacation { get; set; }
+        public RelayCommand CommandDeleteVacation { get; set; }
+
+        public string Duration
+        {
+            get => duration;
+            set
+            {
+                duration = value;
+                OnPropertyChanged(nameof(Duration));
+            }
+        }
+
+        public DateTime Start
+        {
+            get => start;
+            set
+            {
+                start = value;
+                OnPropertyChanged(nameof(Start));
+            }
+        }
+
+        public IEnumerable<Vacation> Vacations
+        {
+            get => vacations;
+            set
+            {
+                vacations = value;
+                OnPropertyChanged(nameof(Vacations));
+            }
+        }
 
         public string[] Colors { get; set; } = 
             {
@@ -78,6 +113,7 @@ namespace FrontendWPF
                     currentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
                     Name = currentEmployee.Name;
                     EmpColor = currentEmployee.Color;
+                    Vacations = currentEmployee.Vacations; 
                 }                    
             }
         }
@@ -100,6 +136,8 @@ namespace FrontendWPF
                 EmpColor = null;
             }, 
             o => currentEmployee != null && currentEmployee.Name == this.Name);
+
+            CommandAddVacation = new RelayCommand(o => AddVacation());
             
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
@@ -121,6 +159,24 @@ namespace FrontendWPF
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        private async void AddVacation()
+        {
+            try
+            {
+                Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
+                var response = await client.PostAsJsonAsync("/api/values/vacation/", newVacation);
+                response.EnsureSuccessStatusCode(); // Throw on error code. 
+                //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                //studentsListView.ItemsSource = await GetAllStudents();
+                //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
+                GetAllEmployees();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+            }
         }
 
         private DataView CreateDataView(IEnumerable<Employee> employees)
