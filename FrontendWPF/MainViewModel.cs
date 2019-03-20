@@ -19,6 +19,7 @@ namespace FrontendWPF
     {
         private IEnumerable<Employee> employees;
         private DataView table;
+        private Employee currentEmployee;
 
         public DataView Table
         {
@@ -28,6 +29,11 @@ namespace FrontendWPF
                 table = value;
                 OnPropertyChanged(nameof(Table));
             }
+        }
+
+        public Employee CurrentEmployee
+        {
+            get => 
         }
 
         public MainViewModel()
