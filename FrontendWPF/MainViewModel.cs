@@ -1,27 +1,25 @@
 ﻿using FrontendWPF.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
 using System.Web.Script.Serialization;
 using System.Data;
+using System.Windows;
 
 namespace FrontendWPF
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private IEnumerable<Employee> employees;
+        private static IEnumerable<Employee> employees;
         private DataView table;
         private DataRowView currentRow;
-        private Employee currentEmployee = new Employee() { Color = "Purple" };          
-        
+        private Employee currentEmployee = new Employee() { Color = "Purple" };
+        private static HttpClient client = new HttpClient();
+
         public string[] Colors { get; set; } = 
             {
                 "Red",
@@ -67,10 +65,15 @@ namespace FrontendWPF
 
         public MainViewModel()
         {
-            bool success = false;
-            employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
+            //bool success = false;
+            //employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
 
-            Table = CreateDataView(employees);
+            client.BaseAddress = new Uri("http://localhost:52909");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            GetAllEmployees();
+
+            
             
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
@@ -152,36 +155,52 @@ namespace FrontendWPF
             return dataTable.DefaultView;
         }
 
-        public T CallWebAPi<T>(Uri url, string method, out bool isSuccessStatusCode)
-        {
-            T result = default(T);
-
-            using (HttpClient client = new HttpClient())
+        public async void GetAllEmployees()
+        {            
+            try
             {
-                client.BaseAddress = url;
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-                //    System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", userName, password))));
-
-                HttpResponseMessage response = client.GetAsync(method).Result;
-                isSuccessStatusCode = response.IsSuccessStatusCode;
-                var javaScriptSerializer = new JavaScriptSerializer();
-                if (isSuccessStatusCode)
-                {
-                    var dataobj = response.Content.ReadAsStringAsync();
-                    result = javaScriptSerializer.Deserialize<T>(dataobj.Result);
-                }
-                else if (Convert.ToString(response.StatusCode) != "InternalServerError")
-                {
-                    result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"" + response.ReasonPhrase + "\" }");
-                }
-                else
-                {
-                    result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"InternalServerError\" }");
-                }
+                HttpResponseMessage response = await client.GetAsync("/api/values/");
+                response.EnsureSuccessStatusCode(); // Throw on error code. 
+                employees = await response.Content.ReadAsAsync<IEnumerable<Employee>>();
+                Table = CreateDataView(employees);
             }
-            return result;
+            catch (Exception)
+            {
+                //MessageBox.Show("Error!");
+            }
+            
         }
-    }
+
+        //public T CallWebAPi<T>(Uri url, string method, out bool isSuccessStatusCode)
+        //{
+        //    T result = default(T);
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        client.BaseAddress = url;
+        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
+        //        //    System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", userName, password))));
+
+        //        HttpResponseMessage response = client.GetAsync(method).Result;
+        //        isSuccessStatusCode = response.IsSuccessStatusCode;
+        //        var javaScriptSerializer = new JavaScriptSerializer();
+        //        if (isSuccessStatusCode)
+        //        {
+        //            var dataobj = response.Content.ReadAsStringAsync();
+        //            result = javaScriptSerializer.Deserialize<T>(dataobj.Result);
+        //        }
+        //        else if (Convert.ToString(response.StatusCode) != "InternalServerError")
+        //        {
+        //            result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"" + response.ReasonPhrase + "\" }");
+        //        }
+        //        else
+        //        {
+        //            result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"InternalServerError\" }");
+        //        }
+        //    }
+        //    return result;
+        //}
+    }    
 }
