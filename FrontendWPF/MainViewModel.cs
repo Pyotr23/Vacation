@@ -9,6 +9,8 @@ using System.Net.Http.Headers;
 using System.Web.Script.Serialization;
 using System.Data;
 using System.Windows;
+using System.Collections;
+using System.Threading.Tasks;
 
 namespace FrontendWPF
 {
@@ -124,7 +126,9 @@ namespace FrontendWPF
             set
             {
                 table = value;
+                CreateDataSecondTable(employees);
                 OnPropertyChanged(nameof(Table));
+                //CreateDataSecondTable(employees);
             }
         }
 
@@ -147,17 +151,15 @@ namespace FrontendWPF
 
         public MainViewModel()
         {
-            CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
-            CellRows.Add(new Cell[] { new Cell("Yellow"), new Cell("Red") });
-            OnPropertyChanged(nameof(CellRows));
-
-            //bool success = false;
-            //employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
+            CreateDataSecondTable(employees);
+            //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
+            //CellRows.Add(new Cell[] { new Cell("Yellow"), new Cell("Red") });
+            //OnPropertyChanged(nameof(CellRows));
 
             client.BaseAddress = new Uri("http://localhost:52909");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            GetAllEmployees();
+            GetAllEmployees();             
 
             AddEmployee = new RelayCommand(o => NewEmployee(), v => EmpColor != null);
             DeleteEmployee = new RelayCommand(o => 
@@ -292,12 +294,65 @@ namespace FrontendWPF
                 response.EnsureSuccessStatusCode(); // Throw on error code. 
                 employees = await response.Content.ReadAsAsync<IEnumerable<Employee>>();
                 Table = CreateDataView(employees);
+                //await Task.Factory.StartNew(() =>
+                // {
+                //     var rtyu = true;
+                //     while (rtyu)
+                //     {
+                //         if (employees != null)
+                //         {
+                //             CreateDataSecondTable(employees);
+                //             rtyu = false;
+                //         }
+                //     }
+                // });
+
+                //CreateDataSecondTable(employees);
             }
             catch (Exception)
             {
                 //MessageBox.Show("Error!");
+            }            
+        }
+
+        public void CreateDataSecondTable(IEnumerable<Employee> data)
+        {
+            if (data != null)
+            {
+                CellRows.Clear();
+                Vacation vacation;
+                HashSet<int> ht = new HashSet<int>();
+                Cell backCell = new Cell("Red");
+                Cell frontCell;
+
+                foreach (Employee emp in data)
+                {
+                    for (int i = 0; i < emp.Vacations.Count; i++)
+                    {
+                        vacation = emp.Vacations[i];
+                        for (int j = 0; j < vacation.Duration; j++)
+                        {
+                            ht.Add(vacation.Start.DayOfYear + j);
+                        }
+                    }
+                    Cell[] cellsInRow = new Cell[100];
+                    frontCell = new Cell(emp.Color);
+                    for (int i = 0; i < 100; i++)
+                    {
+                        cellsInRow[i] = ht.Contains(i) ? frontCell : backCell;
+                    }
+                    ht.Clear();
+                    CellRows.Add(cellsInRow);
+                }
             }
-            
+            else
+            {
+                CellRows.Add(new Cell[365]);
+                CellRows.Add(new Cell[365]);
+                //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
+                //CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });
+            }
+            OnPropertyChanged(nameof(CellRows));
         }
 
         public async void NewEmployee()
