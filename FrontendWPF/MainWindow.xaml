@@ -18,6 +18,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid>            
             <Grid.ColumnDefinitions>
@@ -59,19 +60,76 @@
         </Grid>
         <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
                   SelectedItem="{Binding CurrentRow, Mode=OneWayToSource}"/>
+        <TextBlock Text="График отпусков на 2019 год" Grid.Row="2" Margin="5,20,5,5"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="5">
+            <StackPanel>
+                <TextBlock Text="1 квартал" HorizontalAlignment="Center"/>
+                <DataGrid SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding FirstQuarter, UpdateSourceTrigger=PropertyChanged}"  
+                  ColumnWidth="3" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left"
+                  dataGrid2D:ItemsSource.RowHeadersSource="{Binding EmployeeNames, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <dataGrid2D:Cell.Template>
+                        <DataTemplate>
+                            <Grid Background="{Binding Color}" Width="3"/>
+                        </DataTemplate>
+                    </dataGrid2D:Cell.Template>
+                </DataGrid>
+            </StackPanel>
+            
+            <StackPanel>
+                <TextBlock Text="2 квартал" HorizontalAlignment="Center"/>
+                <DataGrid SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding SecondQuarter, UpdateSourceTrigger=PropertyChanged}"  
+                  ColumnWidth="3" HeadersVisibility="None"  MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left" RowHeight="22">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <dataGrid2D:Cell.Template>
+                        <DataTemplate>
+                            <Grid Background="{Binding Color}" Width="3"/>
+                        </DataTemplate>
+                    </dataGrid2D:Cell.Template>
+                </DataGrid>
+            </StackPanel>
 
-        <DataGrid Grid.Row="2" SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding Cells, UpdateSourceTrigger=PropertyChanged}" 
-                  ColumnWidth="3" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left">
-            <DataGrid.Resources>
-                <Style TargetType="DataGridCell">                    
-                    <Setter Property="BorderThickness" Value="0"/>                    
-                </Style>
-            </DataGrid.Resources>
-            <dataGrid2D:Cell.Template>
-                <DataTemplate>
-                    <Grid Background="{Binding Color}" Width="3"/>
-                </DataTemplate>
-            </dataGrid2D:Cell.Template>            
-        </DataGrid>
+            <StackPanel>
+                <TextBlock Text="3 квартал" HorizontalAlignment="Center"/>
+                <DataGrid SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding ThirdQuarter, UpdateSourceTrigger=PropertyChanged}"  
+                  ColumnWidth="3" HeadersVisibility="None"  MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left" RowHeight="22">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <dataGrid2D:Cell.Template>
+                        <DataTemplate>
+                            <Grid Background="{Binding Color}" Width="3"/>
+                        </DataTemplate>
+                    </dataGrid2D:Cell.Template>
+                </DataGrid>
+            </StackPanel>
+
+            <StackPanel>
+                <TextBlock Text="4 квартал" HorizontalAlignment="Center"/>
+                <DataGrid SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding FourthQuarter, UpdateSourceTrigger=PropertyChanged}"  
+                  ColumnWidth="3" HeadersVisibility="None"  MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left" RowHeight="22">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.Resources>
+                    <dataGrid2D:Cell.Template>
+                        <DataTemplate>
+                            <Grid Background="{Binding Color}" Width="3"/>
+                        </DataTemplate>
+                    </dataGrid2D:Cell.Template>
+                </DataGrid>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

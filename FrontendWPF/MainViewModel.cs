@@ -33,7 +33,9 @@ namespace FrontendWPF
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
-        public RelayCommand CommandDeleteVacation { get; set; }
+        public RelayCommand CommandDeleteVacation { get; set; }  
+        
+        public IEnumerable<string> EmployeeNames { get; set; }
 
         public Cell[,] Cells
         {
@@ -45,6 +47,11 @@ namespace FrontendWPF
             }
         }
 
+        public Cell[,] FirstQuarter { get; set; }
+        public Cell[,] SecondQuarter { get; set; }
+        public Cell[,] ThirdQuarter { get; set; }
+        public Cell[,] FourthQuarter { get; set; }
+
         //public List<Cell[]> CellRows
         //{
         //    get => cellRows;
@@ -54,7 +61,7 @@ namespace FrontendWPF
         //        OnPropertyChanged(nameof(CellRows));
         //    }
         //}
-        
+
         public Vacation CurrentVacation
         {
             get => currentVacation;
@@ -136,9 +143,11 @@ namespace FrontendWPF
             get => table;
             set
             {
-                table = value;
-                CreateDataSecondTable(employees);                
-                OnPropertyChanged(nameof(Table));                
+                table = value;                             
+                OnPropertyChanged(nameof(Table));
+                EmployeeNames = employees.Select(x => x.Name).ToList();
+                OnPropertyChanged(nameof(EmployeeNames));
+                CreateDataSecondTable(employees);
             }
         }
 
@@ -216,7 +225,7 @@ namespace FrontendWPF
                 //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
                 //studentsListView.ItemsSource = await GetAllStudents();
                 //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
-                GetAllEmployees();
+                GetAllEmployees();                
             }
             catch (Exception ex)
             {
@@ -327,15 +336,23 @@ namespace FrontendWPF
 
         public void CreateDataSecondTable(IEnumerable<Employee> data)
         {
-            Cells = new Cell[data.Count(), 365];
-            //CellRows.Capacity = data.Count();
+            int firstQuarterEnd = DateTime.Parse("31/03/2019").DayOfYear;
+            FirstQuarter = new Cell[data.Count(), firstQuarterEnd];
+            int secondQuarterEnd = DateTime.Parse("30/06/2019").DayOfYear;
+            SecondQuarter = new Cell[data.Count(), secondQuarterEnd - firstQuarterEnd];
+            int thirdQuarterEnd = DateTime.Parse("30/09/2019").DayOfYear;
+            ThirdQuarter = new Cell[data.Count(), thirdQuarterEnd - secondQuarterEnd];
+            int fourthQuarterEnd = DateTime.Parse("31/12/2019").DayOfYear;
+            FourthQuarter = new Cell[data.Count(), fourthQuarterEnd - thirdQuarterEnd];
             Vacation vacation;
             HashSet<int> ht = new HashSet<int>();
             Cell backCell = new Cell("AntiqueWhite");
             Cell frontCell;
 
             for (int n = 0; n < data.Count(); n++)
-            {                
+            {
+                frontCell = new Cell(data.ElementAt(n).Color);
+
                 for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
                 {
                     vacation = data.ElementAt(n).Vacations[i];
@@ -343,17 +360,66 @@ namespace FrontendWPF
                     {
                         ht.Add(vacation.Start.DayOfYear + j);
                     }
-                }
-                
-                frontCell = new Cell(data.ElementAt(n).Color);
-                for (int i = 0; i < 365; i++)
+                }                
+
+                for (int i = 0; i < firstQuarterEnd; i++)
                 {
-                    Cells[n, i] = ht.Contains(i) ? frontCell : backCell;                    
+                    FirstQuarter[n, i] = ht.Contains(i) ? frontCell : backCell;
                 }
+
+                for (int i = firstQuarterEnd; i < secondQuarterEnd; i++)
+                {
+                    SecondQuarter[n, i - firstQuarterEnd] = ht.Contains(i) ? frontCell : backCell;
+                }
+
+                for (int i = secondQuarterEnd; i < thirdQuarterEnd; i++)
+                {
+                    ThirdQuarter[n, i - secondQuarterEnd] = ht.Contains(i) ? frontCell : backCell;
+                }
+
+                for (int i = thirdQuarterEnd; i < fourthQuarterEnd; i++)
+                {
+                    FourthQuarter[n, i - thirdQuarterEnd] = ht.Contains(i) ? frontCell : backCell;
+                }
+
                 ht.Clear();                
-                OnPropertyChanged(nameof(Cells));
             }
+            OnPropertyChanged(nameof(FirstQuarter));
+            OnPropertyChanged(nameof(SecondQuarter));
+            OnPropertyChanged(nameof(ThirdQuarter));
+            OnPropertyChanged(nameof(FourthQuarter));
         }
+
+
+        //public void CreateDataSecondTable(IEnumerable<Employee> data)
+        //{
+        //    Cells = new Cell[data.Count(), 365];
+        //    //CellRows.Capacity = data.Count();
+        //    Vacation vacation;
+        //    HashSet<int> ht = new HashSet<int>();
+        //    Cell backCell = new Cell("AntiqueWhite");
+        //    Cell frontCell;
+
+        //    for (int n = 0; n < data.Count(); n++)
+        //    {                
+        //        for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
+        //        {
+        //            vacation = data.ElementAt(n).Vacations[i];
+        //            for (int j = 0; j < vacation.Duration; j++)
+        //            {
+        //                ht.Add(vacation.Start.DayOfYear + j);
+        //            }
+        //        }
+                
+        //        frontCell = new Cell(data.ElementAt(n).Color);
+        //        for (int i = 0; i < 365; i++)
+        //        {
+        //            Cells[n, i] = ht.Contains(i) ? frontCell : backCell;                    
+        //        }
+        //        ht.Clear();                
+        //        OnPropertyChanged(nameof(Cells));
+        //    }
+        //}
 
 
         //public void CreateDataSecondTable(IEnumerable<Employee> data)
