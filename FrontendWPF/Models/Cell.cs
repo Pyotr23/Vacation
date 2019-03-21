@@ -8,12 +8,10 @@ namespace FrontendWPF.Models
 {
     public class Cell
     {
-        public string Value { get; }
         public string Color { get; }
 
-        public Cell(string value, string color)
-        {
-            Value = value;
+        public Cell(string color)
+        {            
             Color = color;
         }
     }

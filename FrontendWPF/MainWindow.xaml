@@ -59,8 +59,19 @@
         </Grid>
         <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
                   SelectedItem="{Binding CurrentRow, Mode=OneWayToSource}"/>
-        <DataGrid Grid.Row="2">
-            
+        <DataGrid Grid.Row="2" dataGrid2D:ItemsSource.Array2D="{Binding Cells}" SelectionUnit="Cell" ColumnWidth="2" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">                    
+                    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                    
+                </Style>
+            </DataGrid.Resources>
+            <dataGrid2D:Cell.Template>
+                <DataTemplate>
+                    <Grid Background="{Binding Color}" Width="3"/>
+                    <!--<TextBox Background="{Binding Color}" Width="4" />-->
+                </DataTemplate>
+            </dataGrid2D:Cell.Template>            
         </DataGrid>
     </Grid>
 </Window>

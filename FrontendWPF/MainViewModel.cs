@@ -29,7 +29,12 @@ namespace FrontendWPF
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
-        public RelayCommand CommandDeleteVacation { get; set; }    
+        public RelayCommand CommandDeleteVacation { get; set; }
+
+        public Cell[,] Cells { get; set; } = {
+            { new Cell("", "Black"), new Cell("", "Green") },
+            { new Cell("", "Red"), new Cell("", "Blue") }
+        };
         
         public Vacation CurrentVacation
         {
