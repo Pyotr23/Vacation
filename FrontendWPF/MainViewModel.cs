@@ -27,22 +27,33 @@ namespace FrontendWPF
         private DateTime start = DateTime.Now;
         private string duration;
         private Vacation currentVacation;
-        private List<Cell[]> cellRows = new List<Cell[]>();
+        //private List<Cell[]> cellRows = new List<Cell[]>();
+        private Cell[,] cells;
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
         public RelayCommand CommandDeleteVacation { get; set; }
 
-        public List<Cell[]> CellRows
+        public Cell[,] Cells
         {
-            get => cellRows;
+            get => cells;
             set
             {
-                cellRows = value;
-                OnPropertyChanged(nameof(CellRows));
+                cells = value;
+                OnPropertyChanged(nameof(Cells));
             }
         }
+
+        //public List<Cell[]> CellRows
+        //{
+        //    get => cellRows;
+        //    set
+        //    {
+        //        cellRows = value;
+        //        OnPropertyChanged(nameof(CellRows));
+        //    }
+        //}
         
         public Vacation CurrentVacation
         {
@@ -150,7 +161,7 @@ namespace FrontendWPF
 
         public MainViewModel()
         {
-            CreateDataSecondTable(employees);
+            //CreateDataSecondTable(employees);
             //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
             //CellRows.Add(new Cell[] { new Cell("Yellow"), new Cell("Red") });
             //OnPropertyChanged(nameof(CellRows));
@@ -316,55 +327,86 @@ namespace FrontendWPF
 
         public void CreateDataSecondTable(IEnumerable<Employee> data)
         {
-            if (data != null)
-            {
-                //for (int i = 0; i < data.Count(); i++)
-                //{
-                //    CellRows.Add(new Cell[365]);
-                //}
-                //OnPropertyChanged(nameof(CellRows));
+            Cells = new Cell[data.Count(), 365];
+            //CellRows.Capacity = data.Count();
+            Vacation vacation;
+            HashSet<int> ht = new HashSet<int>();
+            Cell backCell = new Cell("AntiqueWhite");
+            Cell frontCell;
 
-                CellRows.Clear();
-                //CellRows.Capacity = data.Count();
-                Vacation vacation;
-                HashSet<int> ht = new HashSet<int>();
-                Cell backCell = new Cell("AntiqueWhite");
-                Cell frontCell;
-
-                for (int n = 0; n < data.Count(); n++)
-                {                    
-                    //CellRows.Add(new Cell[365]);
-                    for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
+            for (int n = 0; n < data.Count(); n++)
+            {                
+                for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
+                {
+                    vacation = data.ElementAt(n).Vacations[i];
+                    for (int j = 0; j < vacation.Duration; j++)
                     {
-                        vacation = data.ElementAt(n).Vacations[i];
-                        for (int j = 0; j < vacation.Duration; j++)
-                        {
-                            ht.Add(vacation.Start.DayOfYear + j);
-                        }
+                        ht.Add(vacation.Start.DayOfYear + j);
                     }
-                    Cell[] cellsInRow = new Cell[365];
-                    frontCell = new Cell(data.ElementAt(n).Color);
-                    for (int i = 0; i < 365; i++)
-                    {
-                        cellsInRow[i] = ht.Contains(i) ? frontCell : backCell;
-                    }
-                    ht.Clear();
-                    //CellRows[n] = cellsInRow;
-                    CellRows.Add(cellsInRow);
-                }                
+                }
+                
+                frontCell = new Cell(data.ElementAt(n).Color);
+                for (int i = 0; i < 365; i++)
+                {
+                    Cells[n, i] = ht.Contains(i) ? frontCell : backCell;                    
+                }
+                ht.Clear();                
+                OnPropertyChanged(nameof(Cells));
             }
-            else
-            {
-                CellRows.Add(new Cell[365]);
-                CellRows.Add(new Cell[365]);
-                CellRows.Add(new Cell[365]);
-                CellRows.Add(new Cell[365]);
-
-                //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
-                //CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });                
-            }
-            OnPropertyChanged(nameof(CellRows));
         }
+
+
+        //public void CreateDataSecondTable(IEnumerable<Employee> data)
+        //{
+        //    if (data != null)
+        //    {
+        //        for (int i = 0; i < data.Count(); i++)
+        //        {
+        //            CellRows.Add(new Cell[365]);
+        //        }
+        //        OnPropertyChanged(nameof(CellRows));
+
+        //        CellRows.Clear();
+        //        CellRows.Capacity = data.Count();
+        //        Vacation vacation;
+        //        HashSet<int> ht = new HashSet<int>();
+        //        Cell backCell = new Cell("AntiqueWhite");
+        //        Cell frontCell;
+
+        //        for (int n = 0; n < data.Count(); n++)
+        //        {
+        //            CellRows.Add(new Cell[365]);
+        //            for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
+        //            {
+        //                vacation = data.ElementAt(n).Vacations[i];
+        //                for (int j = 0; j < vacation.Duration; j++)
+        //                {
+        //                    ht.Add(vacation.Start.DayOfYear + j);
+        //                }
+        //            }
+        //            Cell[] cellsInRow = new Cell[365];
+        //            frontCell = new Cell(data.ElementAt(n).Color);
+        //            for (int i = 0; i < 365; i++)
+        //            {
+        //                cellsInRow[i] = ht.Contains(i) ? frontCell : backCell;
+        //            }
+        //            ht.Clear();
+        //            CellRows[n] = cellsInRow;
+        //            CellRows.Add(cellsInRow);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        CellRows.Add(new Cell[365]);
+        //        CellRows.Add(new Cell[365]);
+        //        CellRows.Add(new Cell[365]);
+        //        CellRows.Add(new Cell[365]);
+
+        //        CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
+        //        CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });
+        //    }
+        //    OnPropertyChanged(nameof(CellRows));
+        //}
 
         public async void NewEmployee()
         {

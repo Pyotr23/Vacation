@@ -60,12 +60,11 @@
         <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
                   SelectedItem="{Binding CurrentRow, Mode=OneWayToSource}"/>
 
-        <DataGrid Grid.Row="2" SelectionUnit="Cell" dataGrid2D:ItemsSource.RowsSource="{Binding CellRows, UpdateSourceTrigger=PropertyChanged}" 
+        <DataGrid Grid.Row="2" SelectionUnit="Cell" dataGrid2D:ItemsSource.Array2D="{Binding Cells, UpdateSourceTrigger=PropertyChanged}" 
                   ColumnWidth="3" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">                    
-                    <Setter Property="BorderThickness" Value="0"/>
-                    
+                    <Setter Property="BorderThickness" Value="0"/>                    
                 </Style>
             </DataGrid.Resources>
             <dataGrid2D:Cell.Template>
