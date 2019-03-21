@@ -27,13 +27,13 @@ namespace FrontendWPF
         private DateTime start = DateTime.Now;
         private string duration;
         private Vacation currentVacation;
-        //private List<Cell[]> cellRows = new List<Cell[]>();
         private Cell[,] cells;
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
         public RelayCommand CommandDeleteVacation { get; set; }  
+        public RelayCommand CommandRefresh { get; set; }
         
         public IEnumerable<string> EmployeeNames { get; set; }
 
@@ -50,17 +50,7 @@ namespace FrontendWPF
         public Cell[,] FirstQuarter { get; set; }
         public Cell[,] SecondQuarter { get; set; }
         public Cell[,] ThirdQuarter { get; set; }
-        public Cell[,] FourthQuarter { get; set; }
-
-        //public List<Cell[]> CellRows
-        //{
-        //    get => cellRows;
-        //    set
-        //    {
-        //        cellRows = value;
-        //        OnPropertyChanged(nameof(CellRows));
-        //    }
-        //}
+        public Cell[,] FourthQuarter { get; set; }        
 
         public Vacation CurrentVacation
         {
@@ -147,7 +137,7 @@ namespace FrontendWPF
                 OnPropertyChanged(nameof(Table));
                 EmployeeNames = employees.Select(x => x.Name).ToList();
                 OnPropertyChanged(nameof(EmployeeNames));
-                CreateDataSecondTable(employees);
+                CreateDataSecondTable(employees);                
             }
         }
 
@@ -170,11 +160,6 @@ namespace FrontendWPF
 
         public MainViewModel()
         {
-            //CreateDataSecondTable(employees);
-            //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
-            //CellRows.Add(new Cell[] { new Cell("Yellow"), new Cell("Red") });
-            //OnPropertyChanged(nameof(CellRows));
-
             client.BaseAddress = new Uri("http://localhost:52909");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -189,22 +174,11 @@ namespace FrontendWPF
             }, 
             o => currentEmployee != null && currentEmployee.Name == this.Name);
 
-            CommandAddVacation = new RelayCommand(o => AddVacation());
-            CommandDeleteVacation = new RelayCommand(o => DeleteVacation());
-            
-            //HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("http://localhost:52909");
+            int durationDigit;
 
-            //client.DefaultRequestHeaders.Accept.Add(
-            //    new MediaTypeWithQualityHeaderValue("application/json"));
-
-            //HttpResponseMessage response = client.GetAsync("api/values").Result;
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    Employees = response.Content.ReadAsAsync &
-            //    lt; IEnumerable & lt; Employee & gt; &gt; ().Result
-            //}
+            CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
+            CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+            CommandRefresh = new RelayCommand(o => GetAllEmployees());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -221,10 +195,7 @@ namespace FrontendWPF
                 Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
                 var response = await client.PostAsJsonAsync("/api/values/vacation/", 
                     new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation });
-                response.EnsureSuccessStatusCode(); // Throw on error code. 
-                //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
-                //studentsListView.ItemsSource = await GetAllStudents();
-                //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
+                response.EnsureSuccessStatusCode();                
                 GetAllEmployees();                
             }
             catch (Exception ex)
@@ -240,6 +211,8 @@ namespace FrontendWPF
                 var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}/{currentVacation.VacationId}");
                 response.EnsureSuccessStatusCode();
                 GetAllEmployees();
+                CurrentVacation = null;
+                Duration = "";
             }
             catch (Exception ex)
             {
@@ -312,21 +285,7 @@ namespace FrontendWPF
                 HttpResponseMessage response = await client.GetAsync("/api/values/");
                 response.EnsureSuccessStatusCode(); // Throw on error code. 
                 employees = await response.Content.ReadAsAsync<IEnumerable<Employee>>();
-                Table = CreateDataView(employees);
-                //await Task.Factory.StartNew(() =>
-                // {
-                //     var rtyu = true;
-                //     while (rtyu)
-                //     {
-                //         if (employees != null)
-                //         {
-                //             CreateDataSecondTable(employees);
-                //             rtyu = false;
-                //         }
-                //     }
-                // });
-
-                //CreateDataSecondTable(employees);
+                Table = CreateDataView(employees);                
             }
             catch (Exception)
             {
@@ -388,91 +347,7 @@ namespace FrontendWPF
             OnPropertyChanged(nameof(SecondQuarter));
             OnPropertyChanged(nameof(ThirdQuarter));
             OnPropertyChanged(nameof(FourthQuarter));
-        }
-
-
-        //public void CreateDataSecondTable(IEnumerable<Employee> data)
-        //{
-        //    Cells = new Cell[data.Count(), 365];
-        //    //CellRows.Capacity = data.Count();
-        //    Vacation vacation;
-        //    HashSet<int> ht = new HashSet<int>();
-        //    Cell backCell = new Cell("AntiqueWhite");
-        //    Cell frontCell;
-
-        //    for (int n = 0; n < data.Count(); n++)
-        //    {                
-        //        for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
-        //        {
-        //            vacation = data.ElementAt(n).Vacations[i];
-        //            for (int j = 0; j < vacation.Duration; j++)
-        //            {
-        //                ht.Add(vacation.Start.DayOfYear + j);
-        //            }
-        //        }
-                
-        //        frontCell = new Cell(data.ElementAt(n).Color);
-        //        for (int i = 0; i < 365; i++)
-        //        {
-        //            Cells[n, i] = ht.Contains(i) ? frontCell : backCell;                    
-        //        }
-        //        ht.Clear();                
-        //        OnPropertyChanged(nameof(Cells));
-        //    }
-        //}
-
-
-        //public void CreateDataSecondTable(IEnumerable<Employee> data)
-        //{
-        //    if (data != null)
-        //    {
-        //        for (int i = 0; i < data.Count(); i++)
-        //        {
-        //            CellRows.Add(new Cell[365]);
-        //        }
-        //        OnPropertyChanged(nameof(CellRows));
-
-        //        CellRows.Clear();
-        //        CellRows.Capacity = data.Count();
-        //        Vacation vacation;
-        //        HashSet<int> ht = new HashSet<int>();
-        //        Cell backCell = new Cell("AntiqueWhite");
-        //        Cell frontCell;
-
-        //        for (int n = 0; n < data.Count(); n++)
-        //        {
-        //            CellRows.Add(new Cell[365]);
-        //            for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
-        //            {
-        //                vacation = data.ElementAt(n).Vacations[i];
-        //                for (int j = 0; j < vacation.Duration; j++)
-        //                {
-        //                    ht.Add(vacation.Start.DayOfYear + j);
-        //                }
-        //            }
-        //            Cell[] cellsInRow = new Cell[365];
-        //            frontCell = new Cell(data.ElementAt(n).Color);
-        //            for (int i = 0; i < 365; i++)
-        //            {
-        //                cellsInRow[i] = ht.Contains(i) ? frontCell : backCell;
-        //            }
-        //            ht.Clear();
-        //            CellRows[n] = cellsInRow;
-        //            CellRows.Add(cellsInRow);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        CellRows.Add(new Cell[365]);
-        //        CellRows.Add(new Cell[365]);
-        //        CellRows.Add(new Cell[365]);
-        //        CellRows.Add(new Cell[365]);
-
-        //        CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
-        //        CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });
-        //    }
-        //    OnPropertyChanged(nameof(CellRows));
-        //}
+        }       
 
         public async void NewEmployee()
         {
@@ -480,10 +355,7 @@ namespace FrontendWPF
             {
                 Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
                 var response = await client.PostAsJsonAsync("/api/values/", newEmployee);
-                response.EnsureSuccessStatusCode(); // Throw on error code. 
-                //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
-                //studentsListView.ItemsSource = await GetAllStudents();
-                //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
+                response.EnsureSuccessStatusCode(); // Throw on error code.                 
                 GetAllEmployees();
             }
             catch (Exception ex)
@@ -504,38 +376,6 @@ namespace FrontendWPF
             {
                 MessageBox.Show("Student not Added, May be due to Duplicate ID");
             }
-        }
-
-        //public T CallWebAPi<T>(Uri url, string method, out bool isSuccessStatusCode)
-        //{
-        //    T result = default(T);
-
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        client.BaseAddress = url;
-        //        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //        //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(
-        //        //    System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", userName, password))));
-
-        //        HttpResponseMessage response = client.GetAsync(method).Result;
-        //        isSuccessStatusCode = response.IsSuccessStatusCode;
-        //        var javaScriptSerializer = new JavaScriptSerializer();
-        //        if (isSuccessStatusCode)
-        //        {
-        //            var dataobj = response.Content.ReadAsStringAsync();
-        //            result = javaScriptSerializer.Deserialize<T>(dataobj.Result);
-        //        }
-        //        else if (Convert.ToString(response.StatusCode) != "InternalServerError")
-        //        {
-        //            result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"" + response.ReasonPhrase + "\" }");
-        //        }
-        //        else
-        //        {
-        //            result = javaScriptSerializer.Deserialize<T>("{ \"APIMessage\":\"InternalServerError\" }");
-        //        }
-        //    }
-        //    return result;
-        //}
+        }        
     }    
 }
