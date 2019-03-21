@@ -200,7 +200,7 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+                
             }
         }
 
@@ -216,7 +216,7 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+                
             }
         }
 
@@ -233,7 +233,6 @@ namespace FrontendWPF
             }
 
             // Создаю пустые столбцы с заголовками.
-
             dataTable.Columns.Add("ФИО");
 
             for (int i = 1; i <= maxVacationNumber * 3; i++)
@@ -268,7 +267,7 @@ namespace FrontendWPF
                             myRow[i] = emp.Vacations[i / 3].Duration.ToString();
                             break;
                         case 0:
-                            myRow[i] = DateTime.Parse(myRow[i - 2]).AddDays(int.Parse(myRow[i - 1])).ToShortDateString();
+                            myRow[i] = DateTime.Parse(myRow[i - 2]).AddDays(int.Parse(myRow[i - 1]) - 1).ToShortDateString();
                             break;
                     }
                 }
@@ -289,7 +288,7 @@ namespace FrontendWPF
             }
             catch (Exception)
             {
-                //MessageBox.Show("Error!");
+                
             }            
         }
 
@@ -360,7 +359,7 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+               
             }
         }
 
@@ -374,7 +373,7 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+               
             }
         }        
     }    
