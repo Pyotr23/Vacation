@@ -59,9 +59,9 @@
         </Grid>
         <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
                   SelectedItem="{Binding CurrentRow, Mode=OneWayToSource}"/>
-        
+
         <DataGrid Grid.Row="2" SelectionUnit="Cell" dataGrid2D:ItemsSource.RowsSource="{Binding CellRows, UpdateSourceTrigger=PropertyChanged}" 
-                  ColumnWidth="2" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal">
+                  ColumnWidth="3" HeadersVisibility="Row" MinColumnWidth="2" GridLinesVisibility="Horizontal" HorizontalAlignment="Left">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">                    
                     <Setter Property="BorderThickness" Value="0"/>
@@ -71,7 +71,6 @@
             <dataGrid2D:Cell.Template>
                 <DataTemplate>
                     <Grid Background="{Binding Color}" Width="3"/>
-                    <!--<TextBox Background="{Binding Color}" Width="4" />-->
                 </DataTemplate>
             </dataGrid2D:Cell.Template>            
         </DataGrid>

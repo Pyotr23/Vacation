@@ -126,9 +126,8 @@ namespace FrontendWPF
             set
             {
                 table = value;
-                CreateDataSecondTable(employees);
-                OnPropertyChanged(nameof(Table));
-                //CreateDataSecondTable(employees);
+                CreateDataSecondTable(employees);                
+                OnPropertyChanged(nameof(Table));                
             }
         }
 
@@ -319,38 +318,50 @@ namespace FrontendWPF
         {
             if (data != null)
             {
+                //for (int i = 0; i < data.Count(); i++)
+                //{
+                //    CellRows.Add(new Cell[365]);
+                //}
+                //OnPropertyChanged(nameof(CellRows));
+
                 CellRows.Clear();
+                //CellRows.Capacity = data.Count();
                 Vacation vacation;
                 HashSet<int> ht = new HashSet<int>();
-                Cell backCell = new Cell("Red");
+                Cell backCell = new Cell("AntiqueWhite");
                 Cell frontCell;
 
-                foreach (Employee emp in data)
-                {
-                    for (int i = 0; i < emp.Vacations.Count; i++)
+                for (int n = 0; n < data.Count(); n++)
+                {                    
+                    //CellRows.Add(new Cell[365]);
+                    for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
                     {
-                        vacation = emp.Vacations[i];
+                        vacation = data.ElementAt(n).Vacations[i];
                         for (int j = 0; j < vacation.Duration; j++)
                         {
                             ht.Add(vacation.Start.DayOfYear + j);
                         }
                     }
-                    Cell[] cellsInRow = new Cell[100];
-                    frontCell = new Cell(emp.Color);
-                    for (int i = 0; i < 100; i++)
+                    Cell[] cellsInRow = new Cell[365];
+                    frontCell = new Cell(data.ElementAt(n).Color);
+                    for (int i = 0; i < 365; i++)
                     {
                         cellsInRow[i] = ht.Contains(i) ? frontCell : backCell;
                     }
                     ht.Clear();
+                    //CellRows[n] = cellsInRow;
                     CellRows.Add(cellsInRow);
-                }
+                }                
             }
             else
             {
                 CellRows.Add(new Cell[365]);
                 CellRows.Add(new Cell[365]);
+                CellRows.Add(new Cell[365]);
+                CellRows.Add(new Cell[365]);
+
                 //CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
-                //CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });
+                //CellRows.Add(new Cell[] { new Cell("Green"), new Cell("Red") });                
             }
             OnPropertyChanged(nameof(CellRows));
         }
