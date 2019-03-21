@@ -38,15 +38,15 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public Vacation AddVacation([FromBody]Employee employee, [FromBody]Vacation vacation)
+        public void AddVacation([FromBody]VacationViewModel vacationVM)
         {
-            return employeeRepository.AddVacation(vacation);
+            employeeRepository.AddVacation(vacationVM.EmployeeId, vacationVM.Vacation);
         }
 
-        [HttpDelete("vacation/{id}")]
-        public void DeleteVacation(int id)
+        [HttpDelete("{idE}/{idV}")]
+        public void DeleteVacation(int idE, int idV)
         {
-            employeeRepository.DeleteVacation(id);
+            employeeRepository.DeleteVacation(idE, idV);
         }
 
         //// GET api/values
