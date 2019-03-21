@@ -24,11 +24,27 @@ namespace FrontendWPF
         private IEnumerable<Vacation> vacations;
         private DateTime start;
         private string duration;
+        private Vacation currentVacation;
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
-        public RelayCommand CommandDeleteVacation { get; set; }
+        public RelayCommand CommandDeleteVacation { get; set; }    
+        
+        public Vacation CurrentVacation
+        {
+            get => currentVacation;
+            set
+            {
+                currentVacation = value;
+                OnPropertyChanged(nameof(CurrentVacation));
+                if (currentVacation != null)
+                {
+                    Start = currentVacation.Start;
+                    Duration = currentVacation.Duration.ToString();
+                }                
+            }
+        }
 
         public string Duration
         {
@@ -138,6 +154,7 @@ namespace FrontendWPF
             o => currentEmployee != null && currentEmployee.Name == this.Name);
 
             CommandAddVacation = new RelayCommand(o => AddVacation());
+            CommandDeleteVacation = new RelayCommand(o => DeleteVacation());
             
             //HttpClient client = new HttpClient();
             //client.BaseAddress = new Uri("http://localhost:52909");
@@ -172,6 +189,20 @@ namespace FrontendWPF
                 //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
                 //studentsListView.ItemsSource = await GetAllStudents();
                 //studentsListView.ScrollIntoView(studentsListView.ItemContainerGenerator.Items[studentsListView.Items.Count - 1]);
+                GetAllEmployees();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Student not Added, May be due to Duplicate ID");
+            }
+        }
+
+        public async void DeleteVacation()
+        {
+            try
+            {
+                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}/{currentVacation.VacationId}");
+                response.EnsureSuccessStatusCode();
                 GetAllEmployees();
             }
             catch (Exception ex)
