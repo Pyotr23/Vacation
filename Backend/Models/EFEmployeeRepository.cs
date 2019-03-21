@@ -36,22 +36,28 @@ namespace Backend.Models
             }
         }
 
-        public Vacation AddVacation(Employee employee, Vacation vacation)
+        public void AddVacation(int employeeId, Vacation vacation)
         {
-            context.Employees
-            context.Vacations.Add(vacation);
-            context.SaveChanges();
-            return vacation;
+            Employee changedEmployee = context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+            if (changedEmployee != null)
+            {
+                changedEmployee.Vacations.Add(vacation);
+                context.SaveChanges();
+            }            
         }
 
-        public void DeleteVacation(int id)
+        public void DeleteVacation(int employeeId, int vacationId)
         {
-            Vacation deletedVacation = context.Vacations.FirstOrDefault(v => v.VacationId == id);
-            if (deletedVacation != null)
+            Employee changedEmployee = context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+            if (changedEmployee != null)
             {
-                context.Vacations.Remove(deletedVacation);
-                context.SaveChanges();
-            }
+                Vacation deletedVacation = changedEmployee.Vacations.FirstOrDefault(v => v.VacationId == vacationId);
+                if (deletedVacation != null)
+                {
+                    changedEmployee.Vacations.Remove(deletedVacation);
+                    context.SaveChanges();
+                }
+            }           
         }
     }
 }
