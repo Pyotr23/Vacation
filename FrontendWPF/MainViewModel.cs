@@ -166,7 +166,8 @@ namespace FrontendWPF
             try
             {
                 Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
-                var response = await client.PostAsJsonAsync("/api/values/vacation/", newVacation);
+                var response = await client.PostAsJsonAsync("/api/values/vacation/", 
+                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation });
                 response.EnsureSuccessStatusCode(); // Throw on error code. 
                 //MessageBox.Show("Student Added Successfully", "Result", MessageBoxButton.OK, MessageBoxImage.Information);
                 //studentsListView.ItemsSource = await GetAllStudents();

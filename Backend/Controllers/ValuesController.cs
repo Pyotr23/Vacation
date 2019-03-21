@@ -37,7 +37,7 @@ namespace Backend.Controllers
             employeeRepository.DeleteEmployee(id);
         }
 
-        [HttpPost]
+        [HttpPost("vacation")]
         public void AddVacation([FromBody]VacationViewModel vacationVM)
         {
             employeeRepository.AddVacation(vacationVM.EmployeeId, vacationVM.Vacation);
