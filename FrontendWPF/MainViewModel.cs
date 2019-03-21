@@ -25,16 +25,22 @@ namespace FrontendWPF
         private DateTime start = DateTime.Now;
         private string duration;
         private Vacation currentVacation;
+        private List<Cell[]> cellRows = new List<Cell[]>();
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
         public RelayCommand CommandAddVacation { get; set; }
         public RelayCommand CommandDeleteVacation { get; set; }
 
-        public Cell[,] Cells { get; set; } = {
-            { new Cell("", "Black"), new Cell("", "Green") },
-            { new Cell("", "Red"), new Cell("", "Blue") }
-        };
+        public List<Cell[]> CellRows
+        {
+            get => cellRows;
+            set
+            {
+                cellRows = value;
+                OnPropertyChanged(nameof(CellRows));
+            }
+        }
         
         public Vacation CurrentVacation
         {
@@ -141,6 +147,10 @@ namespace FrontendWPF
 
         public MainViewModel()
         {
+            CellRows.Add(new Cell[] { new Cell("Red"), new Cell("Green") });
+            CellRows.Add(new Cell[] { new Cell("Yellow"), new Cell("Red") });
+            OnPropertyChanged(nameof(CellRows));
+
             //bool success = false;
             //employees = CallWebAPi<IEnumerable<Employee>>(new Uri("http://localhost:52909"), "api/values", out success);
 
