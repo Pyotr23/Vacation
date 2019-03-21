@@ -22,7 +22,7 @@ namespace FrontendWPF
         private static HttpClient client = new HttpClient();
         private Employee currentEmployee;
         private IEnumerable<Vacation> vacations;
-        private DateTime start;
+        private DateTime start = DateTime.Now;
         private string duration;
         private Vacation currentVacation;
 
