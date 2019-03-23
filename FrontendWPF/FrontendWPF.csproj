@@ -67,7 +67,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DateTimeToShortStringConverter.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\VacationViewModel.cs" />
     <Compile Include="RelayCommand.cs" />

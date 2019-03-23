@@ -9,10 +9,7 @@
         Title="MainWindow" SizeToContent="WidthAndHeight">
     <Window.DataContext>
         <local:MainViewModel/>
-    </Window.DataContext>
-    <Window.Resources>
-        <local:DateTimeToShortStringConverter x:Key="DateToStr"/>
-    </Window.Resources>
+    </Window.DataContext>    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
