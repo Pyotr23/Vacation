@@ -177,16 +177,37 @@ namespace FrontendWPF
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             employees = GetAllEmployees();
-            Table = CreateDataView(employees);
-            CreateDataSecondTable(employees);
+            if (employees != null)
+            {
+                Table = CreateDataView(employees);
+                CreateDataSecondTable(employees);
+            }            
             Error = errorSB.ToString();
 
-            AddEmployee = new RelayCommand(o => NewEmployee(), v => EmpColor != null);
+            AddEmployee = new RelayCommand(o => {
+                errorSB.Clear();
+                currentEmployee = NewEmployee();
+                employees = GetAllEmployees();
+                if (employees != null)
+                    CreateDataSecondTable(employees);
+                Table.Table.Rows.Add(new string[] { currentEmployee.Name });
+                OnPropertyChanged(nameof(Table));
+                Error = errorSB.ToString();
+            }, v => EmpColor != null);
+
             DeleteEmployee = new RelayCommand(o => 
             {
+                errorSB.Clear();
                 DelEmployee();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                }
                 Name = "";
                 EmpColor = null;
+                Error = errorSB.ToString();
             }, 
             o => currentEmployee != null && currentEmployee.Name == this.Name);
 
@@ -194,7 +215,16 @@ namespace FrontendWPF
             CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
             CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
 
-            CommandRefresh = new RelayCommand(o => GetAllEmployees());
+            CommandRefresh = new RelayCommand(o => {
+                errorSB.Clear();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                }
+                Error = errorSB.ToString();
+            });
         }       
 
         public IEnumerable<Employee> GetAllEmployees()
@@ -327,18 +357,20 @@ namespace FrontendWPF
             OnPropertyChanged(nameof(FourthQuarter));
         }
 
-        public async void NewEmployee()
+        public Employee NewEmployee()
         {
             try
             {
                 Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
-                var response = await client.PostAsJsonAsync("/api/values/", newEmployee);
-                response.EnsureSuccessStatusCode(); // Throw on error code.                 
-                GetAllEmployees();
+                HttpResponseMessage response = client.PostAsJsonAsync("/api/values/", newEmployee).Result;
+                response.EnsureSuccessStatusCode(); // Throw on error code.  
+                return response.Content.ReadAsAsync<Employee>().Result;
+                //GetAllEmployees();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
+                errorSB.AppendLine("Проблема с добавлением сотрудника.");
+                return null;
             }
         }
 
@@ -347,12 +379,11 @@ namespace FrontendWPF
             try
             {
                 var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}");
-                response.EnsureSuccessStatusCode();
-                GetAllEmployees();
+                response.EnsureSuccessStatusCode();                
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
+                errorSB.AppendLine("Проблема с удалением сотрудника.");                
             }
         }
 
