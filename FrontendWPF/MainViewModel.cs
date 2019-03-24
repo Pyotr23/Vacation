@@ -11,6 +11,7 @@ using System.Data;
 using System.Windows;
 using System.Collections;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace FrontendWPF
 {
@@ -28,6 +29,8 @@ namespace FrontendWPF
         private string duration;
         private Vacation currentVacation;
         private Cell[,] cells;
+        private string error;
+        private StringBuilder errorSB;
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
@@ -36,6 +39,17 @@ namespace FrontendWPF
         public RelayCommand CommandRefresh { get; set; }
         
         public IEnumerable<string> EmployeeNames { get; set; }
+
+        // Свойство для записывания ошибок
+        public string Error
+        {
+            get => error;
+            set
+            {
+                error = value;
+                OnPropertyChanged(nameof(Error));
+            }
+        }
 
         public Cell[,] Cells
         {
@@ -137,7 +151,7 @@ namespace FrontendWPF
                 OnPropertyChanged(nameof(Table));
                 EmployeeNames = employees.Select(x => x.Name).ToList();
                 OnPropertyChanged(nameof(EmployeeNames));
-                CreateDataSecondTable(employees);                
+                //CreateDataSecondTable(employees);                
             }
         }
 
@@ -159,11 +173,13 @@ namespace FrontendWPF
         }
 
         public MainViewModel()
-        {
+        {            
             client.BaseAddress = new Uri("http://localhost:52909");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            GetAllEmployees();             
+            employees = GetAllEmployees();
+            Table = CreateDataView(employees);
+            CreateDataSecondTable(employees);
 
             AddEmployee = new RelayCommand(o => NewEmployee(), v => EmpColor != null);
             DeleteEmployee = new RelayCommand(o => 
@@ -175,9 +191,9 @@ namespace FrontendWPF
             o => currentEmployee != null && currentEmployee.Name == this.Name);
 
             int durationDigit;
-
             CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
             CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+
             CommandRefresh = new RelayCommand(o => GetAllEmployees());
         }
 
@@ -187,6 +203,22 @@ namespace FrontendWPF
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            try
+            {
+                HttpResponseMessage response = client.GetAsync("/api/values/").Result;
+                response.EnsureSuccessStatusCode(); // Throw on error code. 
+                return response.Content.ReadAsAsync<IEnumerable<Employee>>().Result;
+            }
+            catch (Exception)
+            {
+                errorSB.AppendLine("Проблема с получением всех сотрудников.");
+                return null;
+            }
+        }
+
 
         private async void AddVacation()
         {
@@ -276,22 +308,7 @@ namespace FrontendWPF
 
             return dataTable.DefaultView;
         }
-
-        public async void GetAllEmployees()
-        {            
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync("/api/values/");
-                response.EnsureSuccessStatusCode(); // Throw on error code. 
-                employees = await response.Content.ReadAsAsync<IEnumerable<Employee>>();
-                Table = CreateDataView(employees);                
-            }
-            catch (Exception)
-            {
                 
-            }            
-        }
-
         public void CreateDataSecondTable(IEnumerable<Employee> data)
         {
             int firstQuarterEnd = DateTime.Parse("31/03/2019").DayOfYear;
