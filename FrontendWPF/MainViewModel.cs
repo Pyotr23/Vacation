@@ -17,19 +17,9 @@ namespace FrontendWPF
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private static IEnumerable<Employee> employees;
-        private DataView table;
-        private DataRowView currentRow;
-        private string name;
-        private string empColor;
+        private static IEnumerable<Employee> employees;        
         private static HttpClient client = new HttpClient();
-        private Employee currentEmployee;
-        private IEnumerable<Vacation> vacations;
-        private DateTime start = DateTime.Now;
-        private string duration;
-        private Vacation currentVacation;
-        private Cell[,] cells;
-        private string error;
+        private Employee currentEmployee;                     
         private StringBuilder errorSB;
 
         public RelayCommand AddEmployee { get; set; }
@@ -39,7 +29,12 @@ namespace FrontendWPF
         public RelayCommand CommandRefresh { get; set; }
         
         public IEnumerable<string> EmployeeNames { get; set; }
+        public Cell[,] FirstQuarter { get; set; }
+        public Cell[,] SecondQuarter { get; set; }
+        public Cell[,] ThirdQuarter { get; set; }
+        public Cell[,] FourthQuarter { get; set; }
 
+        private string error;
         // Свойство для записывания ошибок
         public string Error
         {
@@ -51,6 +46,7 @@ namespace FrontendWPF
             }
         }
 
+        private Cell[,] cells;
         public Cell[,] Cells
         {
             get => cells;
@@ -59,13 +55,9 @@ namespace FrontendWPF
                 cells = value;
                 OnPropertyChanged(nameof(Cells));
             }
-        }
+        }       
 
-        public Cell[,] FirstQuarter { get; set; }
-        public Cell[,] SecondQuarter { get; set; }
-        public Cell[,] ThirdQuarter { get; set; }
-        public Cell[,] FourthQuarter { get; set; }        
-
+        private Vacation currentVacation;
         public Vacation CurrentVacation
         {
             get => currentVacation;
@@ -81,6 +73,7 @@ namespace FrontendWPF
             }
         }
 
+        private string duration;
         public string Duration
         {
             get => duration;
@@ -91,6 +84,7 @@ namespace FrontendWPF
             }
         }
 
+        private DateTime start = DateTime.Now;
         public DateTime Start
         {
             get => start;
@@ -101,6 +95,7 @@ namespace FrontendWPF
             }
         }
 
+        private IEnumerable<Vacation> vacations;
         public IEnumerable<Vacation> Vacations
         {
             get => vacations;
@@ -120,8 +115,9 @@ namespace FrontendWPF
                 "Azure",
                 "Blue",
                 "Purple"
-            };        
+            };
 
+        private string name;
         public string Name
         {
             get => name;
@@ -132,6 +128,7 @@ namespace FrontendWPF
             }
         }
 
+        private string empColor;
         public string EmpColor
         {
             get => empColor;
@@ -142,6 +139,7 @@ namespace FrontendWPF
             }
         }
 
+        private DataView table;
         public DataView Table
         {
             get => table;
@@ -155,6 +153,7 @@ namespace FrontendWPF
             }
         }
 
+        private DataRowView currentRow;
         public DataRowView CurrentRow
         {
             get => currentRow;
