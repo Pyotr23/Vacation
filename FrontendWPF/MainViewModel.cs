@@ -20,7 +20,7 @@ namespace FrontendWPF
         private static IEnumerable<Employee> employees;        
         private static HttpClient client = new HttpClient();
         private Employee currentEmployee;                     
-        private StringBuilder errorSB;
+        private StringBuilder errorSB = new StringBuilder();
 
         public RelayCommand AddEmployee { get; set; }
         public RelayCommand DeleteEmployee { get; set; }
@@ -179,6 +179,7 @@ namespace FrontendWPF
             employees = GetAllEmployees();
             Table = CreateDataView(employees);
             CreateDataSecondTable(employees);
+            Error = errorSB.ToString();
 
             AddEmployee = new RelayCommand(o => NewEmployee(), v => EmpColor != null);
             DeleteEmployee = new RelayCommand(o => 
@@ -194,14 +195,7 @@ namespace FrontendWPF
             CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
 
             CommandRefresh = new RelayCommand(o => GetAllEmployees());
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName]string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
+        }       
 
         public IEnumerable<Employee> GetAllEmployees()
         {
@@ -218,39 +212,7 @@ namespace FrontendWPF
             }
         }
 
-
-        private async void AddVacation()
-        {
-            try
-            {
-                Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
-                var response = await client.PostAsJsonAsync("/api/values/vacation/", 
-                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation });
-                response.EnsureSuccessStatusCode();                
-                GetAllEmployees();                
-            }
-            catch (Exception ex)
-            {
-                
-            }
-        }
-
-        public async void DeleteVacation()
-        {
-            try
-            {
-                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}/{currentVacation.VacationId}");
-                response.EnsureSuccessStatusCode();
-                GetAllEmployees();
-                CurrentVacation = null;
-                Duration = "";
-            }
-            catch (Exception ex)
-            {
-                
-            }
-        }
-
+        // Создание первой таблицы на основе коллекции сотрудников.
         private DataView CreateDataView(IEnumerable<Employee> employees)
         {
             DataTable dataTable = new DataTable();
@@ -307,7 +269,8 @@ namespace FrontendWPF
 
             return dataTable.DefaultView;
         }
-                
+
+        // Создание второй таблицы на основе коллекции сотрудников.
         public void CreateDataSecondTable(IEnumerable<Employee> data)
         {
             int firstQuarterEnd = DateTime.Parse("31/03/2019").DayOfYear;
@@ -334,7 +297,7 @@ namespace FrontendWPF
                     {
                         ht.Add(vacation.Start.DayOfYear + j);
                     }
-                }                
+                }
 
                 for (int i = 0; i < firstQuarterEnd; i++)
                 {
@@ -356,13 +319,13 @@ namespace FrontendWPF
                     FourthQuarter[n, i - thirdQuarterEnd] = ht.Contains(i) ? frontCell : backCell;
                 }
 
-                ht.Clear();                
+                ht.Clear();
             }
             OnPropertyChanged(nameof(FirstQuarter));
             OnPropertyChanged(nameof(SecondQuarter));
             OnPropertyChanged(nameof(ThirdQuarter));
             OnPropertyChanged(nameof(FourthQuarter));
-        }       
+        }
 
         public async void NewEmployee()
         {
@@ -375,7 +338,7 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-               
+
             }
         }
 
@@ -389,8 +352,49 @@ namespace FrontendWPF
             }
             catch (Exception ex)
             {
-               
+
             }
-        }        
+        }
+
+        private async void AddVacation()
+        {
+            try
+            {
+                Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
+                var response = await client.PostAsJsonAsync("/api/values/vacation/", 
+                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation });
+                response.EnsureSuccessStatusCode();                
+                GetAllEmployees();                
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+        public async void DeleteVacation()
+        {
+            try
+            {
+                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}/{currentVacation.VacationId}");
+                response.EnsureSuccessStatusCode();
+                GetAllEmployees();
+                CurrentVacation = null;
+                Duration = "";
+            }
+            catch (Exception ex)
+            {
+                
+            }
+        }
+
+        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName]string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
     }    
 }
