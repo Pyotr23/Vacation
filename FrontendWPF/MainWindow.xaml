@@ -56,8 +56,8 @@
             </Grid>
             
         </Grid>
-        <DataGrid ItemsSource="{Binding Table, UpdateSourceTrigger=PropertyChanged}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
-                  SelectedItem="{Binding CurrentRow, Mode=OneWayToSource}"/>
+        <DataGrid ItemsSource="{Binding Table}" CanUserAddRows="False" HorizontalAlignment="Left" Grid.Row="1"
+                  SelectedItem="{Binding CurrentRow}"/>
         
         <TextBlock Grid.Row="2" Text="График отпусков на 2019 год" FontWeight="Bold" Margin="5,20,5,5"/> 
         

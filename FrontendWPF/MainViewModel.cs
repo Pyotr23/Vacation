@@ -28,11 +28,22 @@ namespace FrontendWPF
         public RelayCommand CommandDeleteVacation { get; set; }  
         public RelayCommand CommandRefresh { get; set; }
         
-        public IEnumerable<string> EmployeeNames { get; set; }
         public Cell[,] FirstQuarter { get; set; }
         public Cell[,] SecondQuarter { get; set; }
         public Cell[,] ThirdQuarter { get; set; }
         public Cell[,] FourthQuarter { get; set; }
+
+        private IEnumerable<string> employeeNames;
+        public IEnumerable<string> EmployeeNames
+        {
+            get => employeeNames;
+            set
+            {
+                employeeNames = value;
+                OnPropertyChanged(nameof(EmployeeNames));
+            }
+        }
+
 
         private string error;
         // Свойство для записывания ошибок
@@ -147,8 +158,7 @@ namespace FrontendWPF
             {
                 table = value;                             
                 OnPropertyChanged(nameof(Table));
-                EmployeeNames = employees.Select(x => x.Name).ToList();
-                OnPropertyChanged(nameof(EmployeeNames));
+                EmployeeNames = employees.Select(x => x.Name).ToList();                
                 //CreateDataSecondTable(employees);                
             }
         }
@@ -190,8 +200,13 @@ namespace FrontendWPF
                 employees = GetAllEmployees();
                 if (employees != null)
                     CreateDataSecondTable(employees);
-                Table.Table.Rows.Add(new string[] { currentEmployee.Name });
-                OnPropertyChanged(nameof(Table));
+                Table.Table.Rows.Add(currentEmployee.Name);
+                EmployeeNames = employees.Select(x => x.Name).ToList();
+                //Table.Sort = "ФИО";
+                OnPropertyChanged(nameof(Table));               
+
+                //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
+
                 Error = errorSB.ToString();
             }, v => EmpColor != null);
 

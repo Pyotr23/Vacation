@@ -28,11 +28,18 @@ namespace Backend.Models
 
         public void DeleteEmployee(int id)
         {
-            Employee deletedEmployee = context.Employees.FirstOrDefault(e => e.EmployeeId == id);
-            if (deletedEmployee != null)
+            try
             {
-                context.Employees.Remove(deletedEmployee);
-                context.SaveChanges();
+                Employee deletedEmployee = context.Employees.FirstOrDefault(e => e.EmployeeId == id);
+                if (deletedEmployee != null)
+                {
+                    context.Employees.Remove(deletedEmployee);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
 
