@@ -389,11 +389,11 @@ namespace FrontendWPF
             }
         }
 
-        public async void DelEmployee()
+        public void DelEmployee()
         {
             try
             {
-                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}");
+                var response = client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}").Result;
                 response.EnsureSuccessStatusCode();                
             }
             catch (Exception)
