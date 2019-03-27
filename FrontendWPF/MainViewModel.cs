@@ -12,6 +12,7 @@ using System.Windows;
 using System.Collections;
 using System.Threading.Tasks;
 using System.Text;
+using System.Configuration;
 
 namespace FrontendWPF
 {
@@ -183,7 +184,7 @@ namespace FrontendWPF
 
         public MainViewModel()
         {            
-            client.BaseAddress = new Uri("http://localhost:52909");
+            client.BaseAddress = new Uri(ConfigurationManager.AppSettings.Get("localhost"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             employees = GetAllEmployees();
