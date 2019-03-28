@@ -18,6 +18,7 @@ namespace Backend.Models
         public IEnumerable<Employee> Employees => context.Employees.Include(v => v.Vacations);
 
         public IEnumerable<Vacation> Vacations => context.Vacations;
+        public IEnumerable<Color> Colors => context.Colors;
 
         public Employee AddEmployee(Employee employee)
         {

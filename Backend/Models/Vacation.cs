@@ -13,14 +13,8 @@ namespace Backend.Models
         public int VacationId { get; set; }
         public DateTime Start { get; set; }
         public int Duration { get; set; }        
-        //public DateTime Finish { get; set; }        
         public int EmployeeId { get; set; }
         [JsonIgnore]
         public Employee Employee { get; set; }
-
-        //public Vacation()
-        //{
-        //    Finish = Start.AddDays(Duration);
-        //}
     }
 }

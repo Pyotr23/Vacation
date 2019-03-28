@@ -9,6 +9,7 @@ namespace Backend.Models
     {
         IEnumerable<Employee> Employees { get; }
         IEnumerable<Vacation> Vacations { get; }
+        IEnumerable<Color> Colors { get; }
 
         Employee AddEmployee(Employee employee);
         void DeleteEmployee(int id);
