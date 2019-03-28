@@ -69,6 +69,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Cell.cs" />
+    <Compile Include="Models\Color.cs" />
     <Compile Include="Models\VacationViewModel.cs" />
     <Compile Include="RelayCommand.cs" />
     <Page Include="MainWindow.xaml">

@@ -29,6 +29,8 @@ namespace Backend.Models
                     new Color { ColorNumber = -16181 }      // розовый
                     );
 
+                context.SaveChanges();
+
                 context.Employees.AddRange(
                     new Employee { Name = "Pyotr", Color = context.Colors.Skip(0).FirstOrDefault() },
                     new Employee { Name = "Sergey", Color = context.Colors.Skip(1).FirstOrDefault() },

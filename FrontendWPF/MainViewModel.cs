@@ -118,16 +118,16 @@ namespace FrontendWPF
             }
         }
 
-        public string[] Colors { get; set; } = 
-            {
-                "Red",
-                "Orange",
-                "Yellow",
-                "Green",
-                "Azure",
-                "Blue",
-                "Purple"
-            };
+        //public string[] Colors { get; set; } = 
+        //    {
+        //        "Red",
+        //        "Orange",
+        //        "Yellow",
+        //        "Green",
+        //        "Azure",
+        //        "Blue",
+        //        "Purple"
+        //    };
 
         private string name;
         public string Name
@@ -140,16 +140,16 @@ namespace FrontendWPF
             }
         }
 
-        private string empColor;
-        public string EmpColor
-        {
-            get => empColor;
-            set
-            {
-                empColor = value;
-                OnPropertyChanged(nameof(empColor));
-            }
-        }
+        //private string empColor;
+        //public string EmpColor
+        //{
+        //    get => empColor;
+        //    set
+        //    {
+        //        empColor = value;
+        //        OnPropertyChanged(nameof(empColor));
+        //    }
+        //}
 
         private DataView table;
         public DataView Table
