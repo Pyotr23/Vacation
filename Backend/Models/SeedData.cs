@@ -16,10 +16,23 @@ namespace Backend.Models
             context.Database.Migrate();
             if (!context.Employees.Any())
             {
+                context.Colors.AddRange(
+                    new Color { ColorNumber = -16777216 },  // чёрный
+                    new Color { ColorNumber = -16744448 },  // зелёный
+                    new Color { ColorNumber = -16776961 },  // синий
+                    new Color { ColorNumber = -65536 },     // красный
+                    new Color { ColorNumber = -256 },       // жёлтый
+                    new Color { ColorNumber = -8388480 },   // фиолетовый
+                    new Color { ColorNumber = -23296 },     // оранжевый
+                    new Color { ColorNumber = -8355712 },   // серый
+                    new Color { ColorNumber = -16711936 },  // лайм
+                    new Color { ColorNumber = -16181 }      // розовый
+                    );
+
                 context.Employees.AddRange(
-                    new Employee { Name = "Pyotr", Color = "Green" },
-                    new Employee { Name = "Sergey", Color = "Blue" },
-                    new Employee { Name = "Vasiliy", Color = "Red" }
+                    new Employee { Name = "Pyotr", Color = context.Colors.Skip(0).FirstOrDefault() },
+                    new Employee { Name = "Sergey", Color = context.Colors.Skip(1).FirstOrDefault() },
+                    new Employee { Name = "Vasiliy", Color = context.Colors.Skip(2).FirstOrDefault() }
                     );
 
                 context.SaveChanges();
