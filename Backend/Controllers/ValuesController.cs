@@ -23,7 +23,11 @@ namespace Backend.Controllers
             return employeeRepository.Employees;
         }
 
-
+        [HttpGet("colors")]
+        public IEnumerable<Color> GetColors()
+        {
+            return employeeRepository.Colors;
+        }
 
         [HttpPost]
         public Employee PostEmployee([FromBody]Employee employee)
