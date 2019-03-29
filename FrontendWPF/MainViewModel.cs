@@ -252,7 +252,7 @@ namespace FrontendWPF
         {
             try
             {
-                HttpResponseMessage response = client.GetAsync("/api/values/").Result;
+                HttpResponseMessage response = client.GetAsync("/api/values/colors/").Result;
                 response.EnsureSuccessStatusCode();
                 return response.Content.ReadAsAsync<IEnumerable<Color>>().Result;
             }
