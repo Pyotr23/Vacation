@@ -34,6 +34,8 @@ namespace FrontendWPF
         public Cell[,] ThirdQuarter { get; set; }
         public Cell[,] FourthQuarter { get; set; }
 
+        public IEnumerable<Color> Colors { get; set; }
+
         private IEnumerable<string> employeeNames;
         public IEnumerable<string> EmployeeNames
         {
@@ -117,7 +119,7 @@ namespace FrontendWPF
                 OnPropertyChanged(nameof(Vacations));
             }
         }
-
+        
         //public string[] Colors { get; set; } = 
         //    {
         //        "Red",
@@ -140,16 +142,16 @@ namespace FrontendWPF
             }
         }
 
-        //private string empColor;
-        //public string EmpColor
-        //{
-        //    get => empColor;
-        //    set
-        //    {
-        //        empColor = value;
-        //        OnPropertyChanged(nameof(empColor));
-        //    }
-        //}
+        private int empColor;
+        public int EmpColor
+        {
+            get => empColor;
+            set
+            {
+                empColor = value;
+                OnPropertyChanged(nameof(empColor));
+            }
+        }
 
         private DataView table;
         public DataView Table
@@ -176,7 +178,7 @@ namespace FrontendWPF
                 {
                     currentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
                     Name = currentEmployee.Name;
-                    EmpColor = currentEmployee.Color;
+                    //EmpColor = currentEmployee.Color;
                     Vacations = currentEmployee.Vacations; 
                 }                    
             }
@@ -187,67 +189,85 @@ namespace FrontendWPF
             client.BaseAddress = new Uri(ConfigurationManager.AppSettings.Get("localhost"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            employees = GetAllEmployees();
-            if (employees != null)
-            {
-                Table = CreateDataView(employees);
-                CreateDataSecondTable(employees);
-            }            
-            Error = errorSB.ToString();
+            Colors = GetColors();
+            OnPropertyChanged(nameof(Colors));
 
-            AddEmployee = new RelayCommand(o => {
-                errorSB.Clear();
-                currentEmployee = NewEmployee();
-                employees = GetAllEmployees();
-                if (employees != null)
-                    CreateDataSecondTable(employees);
-                Table.Table.Rows.Add(currentEmployee.Name);
-                EmployeeNames = employees.Select(x => x.Name).ToList();
-                //Table.Sort = "ФИО";
-                OnPropertyChanged(nameof(Table));               
+            //employees = GetAllEmployees();
+            //if (employees != null)
+            //{
+            //    Table = CreateDataView(employees);
+            //    CreateDataSecondTable(employees);
+            //}            
+            //Error = errorSB.ToString();
 
-                //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
+            //AddEmployee = new RelayCommand(o => {
+            //    errorSB.Clear();
+            //    currentEmployee = NewEmployee();
+            //    employees = GetAllEmployees();
+            //    if (employees != null)
+            //        CreateDataSecondTable(employees);
+            //    Table.Table.Rows.Add(currentEmployee.Name);
+            //    EmployeeNames = employees.Select(x => x.Name).ToList();
+            //    //Table.Sort = "ФИО";
+            //    OnPropertyChanged(nameof(Table));               
 
-                Error = errorSB.ToString();
-            }, v => EmpColor != null);
+            //    //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
 
-            DeleteEmployee = new RelayCommand(o => 
-            {
-                errorSB.Clear();
-                DelEmployee();
-                employees = GetAllEmployees();
-                if (employees != null)
-                {
-                    Table = CreateDataView(employees);
-                    CreateDataSecondTable(employees);
-                }
-                Name = "";
-                EmpColor = null;
-                Error = errorSB.ToString();
-            }, 
-            o => currentEmployee != null && currentEmployee.Name == this.Name);
+            //    Error = errorSB.ToString();
+            //}, v => EmpColor != null);
 
-            int durationDigit;
-            CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
-            CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+            //DeleteEmployee = new RelayCommand(o => 
+            //{
+            //    errorSB.Clear();
+            //    DelEmployee();
+            //    employees = GetAllEmployees();
+            //    if (employees != null)
+            //    {
+            //        Table = CreateDataView(employees);
+            //        CreateDataSecondTable(employees);
+            //    }
+            //    Name = "";
+            //    EmpColor = null;
+            //    Error = errorSB.ToString();
+            //}, 
+            //o => currentEmployee != null && currentEmployee.Name == this.Name);
 
-            CommandRefresh = new RelayCommand(o => {
-                errorSB.Clear();
-                employees = GetAllEmployees();
-                if (employees != null)
-                {
-                    Table = CreateDataView(employees);
-                    CreateDataSecondTable(employees);
-                }
-                Error = errorSB.ToString();
-            });
+            //int durationDigit;
+            //CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
+            //CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+
+            //CommandRefresh = new RelayCommand(o => {
+            //    errorSB.Clear();
+            //    employees = GetAllEmployees();
+            //    if (employees != null)
+            //    {
+            //        Table = CreateDataView(employees);
+            //        CreateDataSecondTable(employees);
+            //    }
+            //    Error = errorSB.ToString();
+            //});
         }       
+
+        public IEnumerable<Color> GetColors()
+        {
+            try
+            {
+                HttpResponseMessage response = client.GetAsync("/api/values/").Result;
+                response.EnsureSuccessStatusCode();
+                return response.Content.ReadAsAsync<IEnumerable<Color>>().Result;
+            }
+            catch (Exception)
+            {
+                errorSB.AppendLine("Проблема с получением цветов.");
+                return null;
+            }
+        }
 
         public IEnumerable<Employee> GetAllEmployees()
         {
             try
             {
-                HttpResponseMessage response = client.GetAsync("/api/values/").Result;
+                HttpResponseMessage response = client.GetAsync("/api/values/colors/").Result;
                 response.EnsureSuccessStatusCode(); // Throw on error code. 
                 return response.Content.ReadAsAsync<IEnumerable<Employee>>().Result;
             }
@@ -373,22 +393,22 @@ namespace FrontendWPF
             OnPropertyChanged(nameof(FourthQuarter));
         }
 
-        public Employee NewEmployee()
-        {
-            try
-            {
-                Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
-                HttpResponseMessage response = client.PostAsJsonAsync("/api/values/", newEmployee).Result;
-                response.EnsureSuccessStatusCode(); // Throw on error code.  
-                return response.Content.ReadAsAsync<Employee>().Result;
-                //GetAllEmployees();
-            }
-            catch (Exception)
-            {
-                errorSB.AppendLine("Проблема с добавлением сотрудника.");
-                return null;
-            }
-        }
+        //public Employee NewEmployee()
+        //{
+        //    try
+        //    {
+        //        Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
+        //        HttpResponseMessage response = client.PostAsJsonAsync("/api/values/", newEmployee).Result;
+        //        response.EnsureSuccessStatusCode(); // Throw on error code.  
+        //        return response.Content.ReadAsAsync<Employee>().Result;
+        //        //GetAllEmployees();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        errorSB.AppendLine("Проблема с добавлением сотрудника.");
+        //        return null;
+        //    }
+        //}
 
         public void DelEmployee()
         {
