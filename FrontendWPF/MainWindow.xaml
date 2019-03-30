@@ -12,6 +12,7 @@
     </Window.DataContext>
     <Window.Resources>
         <local:ConvMyColorString x:Key="myColorConverter"/>
+        <local:ConvMycolorColor x:Key="colorToTrueColor"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -84,7 +85,7 @@
                     </DataGrid.Resources>
                     <dataGrid2D:Cell.Template>
                         <DataTemplate>
-                            <Grid Background="{Binding Color}" Width="3"/>
+                            <Grid Background="{Binding Color, Converter={StaticResource colorToTrueColor}}" Width="3"/>
                         </DataTemplate>
                     </dataGrid2D:Cell.Template>
                 </DataGrid>
@@ -101,7 +102,7 @@
                     </DataGrid.Resources>
                     <dataGrid2D:Cell.Template>
                         <DataTemplate>
-                            <Grid Background="{Binding Color}" Width="3"/>
+                            <Grid Background="{Binding Color, Converter={StaticResource colorToTrueColor}}" Width="3"/>
                         </DataTemplate>
                     </dataGrid2D:Cell.Template>
                 </DataGrid>
@@ -118,7 +119,7 @@
                     </DataGrid.Resources>
                     <dataGrid2D:Cell.Template>
                         <DataTemplate>
-                            <Grid Background="{Binding Color}" Width="3"/>
+                            <Grid Background="{Binding Color, Converter={StaticResource colorToTrueColor}}" Width="3"/>
                         </DataTemplate>
                     </dataGrid2D:Cell.Template>
                 </DataGrid>
@@ -135,7 +136,7 @@
                     </DataGrid.Resources>
                     <dataGrid2D:Cell.Template>
                         <DataTemplate>
-                            <Grid Background="{Binding Color}" Width="3"/>
+                            <Grid Background="{Binding Color, Converter={StaticResource colorToTrueColor}}" Width="3"/>
                         </DataTemplate>
                     </dataGrid2D:Cell.Template>
                 </DataGrid>

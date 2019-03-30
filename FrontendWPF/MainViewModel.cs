@@ -354,7 +354,7 @@ namespace FrontendWPF
 
             for (int n = 0; n < data.Count(); n++)
             {
-                frontCell = new Cell(data.ElementAt(n).Color);
+                frontCell = new Cell(Colors.FirstOrDefault(c => c.ColorId == data.ElementAt(n).ColorId));
 
                 for (int i = 0; i < data.ElementAt(n).Vacations.Count; i++)
                 {
