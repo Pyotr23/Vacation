@@ -8,9 +8,9 @@ namespace FrontendWPF.Models
 {
     public class Cell
     {
-        public string Color { get; }
+        public Color Color { get; }
 
-        public Cell(string color)
+        public Cell(Color color)
         {            
             Color = color;
         }

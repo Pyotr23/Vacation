@@ -142,8 +142,8 @@ namespace FrontendWPF
             }
         }
 
-        private int empColor;
-        public int EmpColor
+        private Color empColor;
+        public Color EmpColor
         {
             get => empColor;
             set
@@ -178,7 +178,7 @@ namespace FrontendWPF
                 {
                     currentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
                     Name = currentEmployee.Name;
-                    //EmpColor = currentEmployee.Color;
+                    EmpColor = Colors.FirstOrDefault(c => currentEmployee.ColorId == c.ColorId);
                     Vacations = currentEmployee.Vacations; 
                 }                    
             }
@@ -192,13 +192,13 @@ namespace FrontendWPF
             Colors = GetColors();
             OnPropertyChanged(nameof(Colors));
 
-            //employees = GetAllEmployees();
-            //if (employees != null)
-            //{
-            //    Table = CreateDataView(employees);
-            //    CreateDataSecondTable(employees);
-            //}            
-            //Error = errorSB.ToString();
+            employees = GetAllEmployees();
+            if (employees != null)
+            {
+                Table = CreateDataView(employees);
+                CreateDataSecondTable(employees);
+            }
+            Error = errorSB.ToString();
 
             //AddEmployee = new RelayCommand(o => {
             //    errorSB.Clear();
@@ -246,7 +246,7 @@ namespace FrontendWPF
             //    }
             //    Error = errorSB.ToString();
             //});
-        }       
+        }
 
         public IEnumerable<Color> GetColors()
         {
@@ -349,7 +349,7 @@ namespace FrontendWPF
             FourthQuarter = new Cell[data.Count(), fourthQuarterEnd - thirdQuarterEnd];
             Vacation vacation;
             HashSet<int> ht = new HashSet<int>();
-            Cell backCell = new Cell("AntiqueWhite");
+            Cell backCell = new Cell(new Color { ColorNumber = -332841 });  // AntiqueWhite
             Cell frontCell;
 
             for (int n = 0; n < data.Count(); n++)
