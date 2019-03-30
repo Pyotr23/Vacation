@@ -200,37 +200,37 @@ namespace FrontendWPF
             }
             Error = errorSB.ToString();
 
-            //AddEmployee = new RelayCommand(o => {
-            //    errorSB.Clear();
-            //    currentEmployee = NewEmployee();
-            //    employees = GetAllEmployees();
-            //    if (employees != null)
-            //        CreateDataSecondTable(employees);
-            //    Table.Table.Rows.Add(currentEmployee.Name);
-            //    EmployeeNames = employees.Select(x => x.Name).ToList();
-            //    //Table.Sort = "ФИО";
-            //    OnPropertyChanged(nameof(Table));               
+            AddEmployee = new RelayCommand(o =>
+            {
+                errorSB.Clear();
+                currentEmployee = NewEmployee();
+                employees = GetAllEmployees();
+                if (employees != null)
+                    CreateDataSecondTable(employees);
+                Table.Table.Rows.Add(currentEmployee.Name);
+                EmployeeNames = employees.Select(x => x.Name).ToList();
+                //Table.Sort = "ФИО";
+                OnPropertyChanged(nameof(Table));
 
-            //    //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
+                //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
 
-            //    Error = errorSB.ToString();
-            //}, v => EmpColor != null);
+                Error = errorSB.ToString();
+            }, v => EmpColor != null);
 
-            //DeleteEmployee = new RelayCommand(o => 
-            //{
-            //    errorSB.Clear();
-            //    DelEmployee();
-            //    employees = GetAllEmployees();
-            //    if (employees != null)
-            //    {
-            //        Table = CreateDataView(employees);
-            //        CreateDataSecondTable(employees);
-            //    }
-            //    Name = "";
-            //    EmpColor = null;
-            //    Error = errorSB.ToString();
-            //}, 
-            //o => currentEmployee != null && currentEmployee.Name == this.Name);
+            DeleteEmployee = new RelayCommand(o =>
+            {
+                errorSB.Clear();
+                DelEmployee();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                }
+                Name = "";
+                Error = errorSB.ToString();
+            },
+            o => currentEmployee != null && currentEmployee.Name == this.Name);
 
             //int durationDigit;
             //CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
@@ -393,22 +393,22 @@ namespace FrontendWPF
             OnPropertyChanged(nameof(FourthQuarter));
         }
 
-        //public Employee NewEmployee()
-        //{
-        //    try
-        //    {
-        //        Employee newEmployee = new Employee() { Name = this.Name, Color = EmpColor };
-        //        HttpResponseMessage response = client.PostAsJsonAsync("/api/values/", newEmployee).Result;
-        //        response.EnsureSuccessStatusCode(); // Throw on error code.  
-        //        return response.Content.ReadAsAsync<Employee>().Result;
-        //        //GetAllEmployees();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        errorSB.AppendLine("Проблема с добавлением сотрудника.");
-        //        return null;
-        //    }
-        //}
+        public Employee NewEmployee()
+        {
+            try
+            {
+                Employee newEmployee = new Employee() { Name = this.Name, ColorId = EmpColor.ColorId };
+                HttpResponseMessage response = client.PostAsJsonAsync("/api/values/", newEmployee).Result;
+                response.EnsureSuccessStatusCode(); // Throw on error code.  
+                return response.Content.ReadAsAsync<Employee>().Result;
+                //GetAllEmployees();
+            }
+            catch (Exception)
+            {
+                errorSB.AppendLine("Проблема с добавлением сотрудника.");
+                return null;
+            }
+        }
 
         public void DelEmployee()
         {
