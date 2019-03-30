@@ -10,7 +10,7 @@ using FrontendWPF.Models;
 
 namespace FrontendWPF
 {
-    public class ConvIntColor : IValueConverter
+    public class ConvMyColorString : IValueConverter
     {
         Dictionary<int, string> colorDict = new Dictionary<int, string>{
             [-16777216] = "Чёрный",            

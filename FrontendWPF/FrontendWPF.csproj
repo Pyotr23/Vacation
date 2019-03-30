@@ -69,7 +69,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConvIntColor.cs" />
+    <Compile Include="ConvMyColorString.cs" />
     <Compile Include="Models\Cell.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\VacationViewModel.cs" />

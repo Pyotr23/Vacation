@@ -11,7 +11,7 @@
         <local:MainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <local:ConvIntColor x:Key="myColorConverter"/>
+        <local:ConvMyColorString x:Key="myColorConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
