@@ -19,8 +19,7 @@ namespace FrontendWPF
     public class MainViewModel : INotifyPropertyChanged
     {
         private static IEnumerable<Employee> employees;        
-        private static HttpClient client = new HttpClient();
-        private Employee currentEmployee;                     
+        private static HttpClient client = new HttpClient();                           
         private StringBuilder errorSB = new StringBuilder();
 
         public RelayCommand AddEmployee { get; set; }
@@ -35,6 +34,17 @@ namespace FrontendWPF
         public Cell[,] FourthQuarter { get; set; }
 
         public IEnumerable<Color> Colors { get; set; }
+
+        private Employee currentEmployee;
+        public Employee CurrentEmployee
+        {
+            get => currentEmployee;
+            set
+            {
+                currentEmployee = value;
+                OnPropertyChanged(nameof(CurrentEmployee));
+            }
+        }
 
         private IEnumerable<string> employeeNames;
         public IEnumerable<string> EmployeeNames
@@ -164,10 +174,10 @@ namespace FrontendWPF
                 OnPropertyChanged(nameof(CurrentRow));
                 if (currentRow != null)
                 {
-                    currentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
-                    Name = currentEmployee.Name;
-                    EmpColor = Colors.FirstOrDefault(c => currentEmployee.ColorId == c.ColorId);
-                    Vacations = currentEmployee.Vacations; 
+                    CurrentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
+                    Name = CurrentEmployee.Name;
+                    EmpColor = Colors.FirstOrDefault(c => CurrentEmployee.ColorId == c.ColorId);
+                    //Vacations = CurrentEmployee.Vacations; 
                 }                    
             }
         }
@@ -191,15 +201,15 @@ namespace FrontendWPF
             AddEmployee = new RelayCommand(o =>
             {
                 errorSB.Clear();
-                currentEmployee = NewEmployee();
+                CurrentEmployee = NewEmployee();
                 employees = GetAllEmployees();
                 if (employees != null)
                     CreateDataSecondTable(employees);
-                Table.Table.Rows.Add(currentEmployee.Name);
+                Table.Table.Rows.Add(CurrentEmployee.Name);
                 EmployeeNames = employees.Select(x => x.Name).ToList();
                 //Table.Sort = "ФИО";
                 OnPropertyChanged(nameof(Table));
-                Vacations = null;
+                //Vacations = null;
                 //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
 
                 Error = errorSB.ToString();
@@ -218,7 +228,7 @@ namespace FrontendWPF
                 Name = "";
                 Error = errorSB.ToString();
             },
-            o => currentEmployee != null && currentEmployee.Name == this.Name);
+            o => CurrentEmployee != null && CurrentEmployee.Name == this.Name);
 
             int durationDigit;
             CommandAddVacation = new RelayCommand(o => 
@@ -229,11 +239,20 @@ namespace FrontendWPF
                 {
                     Table = CreateDataView(employees);
                     CreateDataSecondTable(employees);
-                    currentEmployee = employees.FirstOrDefault(e => e.EmployeeId == currentEmployee.EmployeeId);
-                    Vacations = currentEmployee.Vacations;
+                    CurrentEmployee = employees.FirstOrDefault(e => e.EmployeeId == CurrentEmployee.EmployeeId);
                 }                
             }, v => int.TryParse(Duration, out durationDigit));
-            CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+            CommandDeleteVacation = new RelayCommand(o => 
+            {
+                DeleteVacation();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                    CurrentEmployee = employees.FirstOrDefault(e => e.EmployeeId == CurrentEmployee.EmployeeId);
+                }
+            }, v => CurrentVacation != null);
 
             CommandRefresh = new RelayCommand(o =>
             {
@@ -414,7 +433,7 @@ namespace FrontendWPF
         {
             try
             {
-                var response = client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}").Result;
+                var response = client.DeleteAsync($"/api/values/{CurrentEmployee.EmployeeId}").Result;
                 response.EnsureSuccessStatusCode();                
             }
             catch (Exception)
@@ -429,7 +448,7 @@ namespace FrontendWPF
             {
                 Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
                 var response = client.PostAsJsonAsync("/api/values/vacation/", 
-                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation }).Result;
+                    new VacationViewModel() { EmployeeId = CurrentEmployee.EmployeeId, Vacation = newVacation }).Result;
                 response.EnsureSuccessStatusCode();                
                 //GetAllEmployees();                
             }
@@ -439,23 +458,18 @@ namespace FrontendWPF
             }
         }
 
-        public async void DeleteVacation()
+        public void DeleteVacation()
         {
             try
             {
-                var response = await client.DeleteAsync($"/api/values/{currentEmployee.EmployeeId}/{currentVacation.VacationId}");
+                var response = client.DeleteAsync($"/api/values/{CurrentEmployee.EmployeeId}/{currentVacation.VacationId}").Result;
                 response.EnsureSuccessStatusCode();
-                GetAllEmployees();
-                CurrentVacation = null;
-                Duration = "";
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                
+                errorSB.AppendLine("Проблема с удалением отпуска.");
             }
-        }
-
-        
+        }        
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
