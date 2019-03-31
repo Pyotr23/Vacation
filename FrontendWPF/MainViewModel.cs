@@ -119,17 +119,6 @@ namespace FrontendWPF
                 OnPropertyChanged(nameof(Vacations));
             }
         }
-        
-        //public string[] Colors { get; set; } = 
-        //    {
-        //        "Red",
-        //        "Orange",
-        //        "Yellow",
-        //        "Green",
-        //        "Azure",
-        //        "Blue",
-        //        "Purple"
-        //    };
 
         private string name;
         public string Name
@@ -162,7 +151,6 @@ namespace FrontendWPF
                 table = value;                             
                 OnPropertyChanged(nameof(Table));
                 EmployeeNames = employees.Select(x => x.Name).ToList();                
-                //CreateDataSecondTable(employees);                
             }
         }
 
@@ -211,7 +199,7 @@ namespace FrontendWPF
                 EmployeeNames = employees.Select(x => x.Name).ToList();
                 //Table.Sort = "ФИО";
                 OnPropertyChanged(nameof(Table));
-
+                Vacations = null;
                 //CurrentRow = Table.FindRows(new object[] { currentEmployee.Name })[0];
 
                 Error = errorSB.ToString();
@@ -232,20 +220,32 @@ namespace FrontendWPF
             },
             o => currentEmployee != null && currentEmployee.Name == this.Name);
 
-            //int durationDigit;
-            //CommandAddVacation = new RelayCommand(o => AddVacation(), v => int.TryParse(Duration, out durationDigit));
-            //CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
+            int durationDigit;
+            CommandAddVacation = new RelayCommand(o => 
+            {
+                AddVacation();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                    currentEmployee = employees.FirstOrDefault(e => e.EmployeeId == currentEmployee.EmployeeId);
+                    Vacations = currentEmployee.Vacations;
+                }                
+            }, v => int.TryParse(Duration, out durationDigit));
+            CommandDeleteVacation = new RelayCommand(o => DeleteVacation(), v => CurrentVacation != null);
 
-            //CommandRefresh = new RelayCommand(o => {
-            //    errorSB.Clear();
-            //    employees = GetAllEmployees();
-            //    if (employees != null)
-            //    {
-            //        Table = CreateDataView(employees);
-            //        CreateDataSecondTable(employees);
-            //    }
-            //    Error = errorSB.ToString();
-            //});
+            CommandRefresh = new RelayCommand(o =>
+            {
+                errorSB.Clear();
+                employees = GetAllEmployees();
+                if (employees != null)
+                {
+                    Table = CreateDataView(employees);
+                    CreateDataSecondTable(employees);
+                }
+                Error = errorSB.ToString();
+            });
         }
 
         public IEnumerable<Color> GetColors()
@@ -423,19 +423,19 @@ namespace FrontendWPF
             }
         }
 
-        private async void AddVacation()
+        private void AddVacation()
         {
             try
             {
                 Vacation newVacation = new Vacation() { Start = this.Start, Duration = int.Parse(this.Duration) };
-                var response = await client.PostAsJsonAsync("/api/values/vacation/", 
-                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation });
+                var response = client.PostAsJsonAsync("/api/values/vacation/", 
+                    new VacationViewModel() { EmployeeId = currentEmployee.EmployeeId, Vacation = newVacation }).Result;
                 response.EnsureSuccessStatusCode();                
-                GetAllEmployees();                
+                //GetAllEmployees();                
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                
+                errorSB.AppendLine("Проблема с добавлением отпуска.");
             }
         }
 
