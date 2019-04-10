@@ -28,19 +28,12 @@ namespace Backend.Models
 
         public void DeleteEmployee(int id)
         {
-            //try
-            //{
                 Employee deletedEmployee = context.Employees.FirstOrDefault(e => e.EmployeeId == id);
                 if (deletedEmployee != null)
                 {
                     context.Employees.Remove(deletedEmployee);
                     context.SaveChanges();
                 }
-            //}
-            //catch (Exception)
-            //{
-
-            //}
         }
 
         public void AddVacation(int employeeId, Vacation vacation)
