@@ -68,18 +68,7 @@ namespace FrontendWPF
                 error = value;
                 OnPropertyChanged(nameof(Error));
             }
-        }
-
-        private Cell[,] cells;
-        public Cell[,] Cells
-        {
-            get => cells;
-            set
-            {
-                cells = value;
-                OnPropertyChanged(nameof(Cells));
-            }
-        }       
+        }        
 
         private Vacation currentVacation;
         public Vacation CurrentVacation
@@ -117,18 +106,7 @@ namespace FrontendWPF
                 start = value;
                 OnPropertyChanged(nameof(Start));
             }
-        }
-
-        private IEnumerable<Vacation> vacations;
-        public IEnumerable<Vacation> Vacations
-        {
-            get => vacations;
-            set
-            {
-                vacations = value;
-                OnPropertyChanged(nameof(Vacations));
-            }
-        }
+        }        
 
         private string name;
         public string Name
