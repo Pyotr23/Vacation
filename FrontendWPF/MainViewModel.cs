@@ -154,8 +154,7 @@ namespace FrontendWPF
                 {
                     CurrentEmployee = employees.FirstOrDefault(e => e.Name == currentRow.Row.ItemArray.ElementAt(0) as string);
                     Name = CurrentEmployee.Name;
-                    EmpColor = Colors.FirstOrDefault(c => CurrentEmployee.ColorId == c.ColorId);
-                    //Vacations = CurrentEmployee.Vacations; 
+                    EmpColor = Colors.FirstOrDefault(c => CurrentEmployee.ColorId == c.ColorId);                    
                 }                    
             }
         }
